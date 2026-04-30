@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Campanhas — Cafeteria</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: #0d0402; color: #fff; }
+
+    /* ── slide transitions ── */
+    .slide-fwd  { animation: slideFwd .38s cubic-bezier(.4,0,.2,1) both; }
+    .slide-back { animation: slideBack .38s cubic-bezier(.4,0,.2,1) both; }
+    @keyframes slideFwd  { from { opacity:0; transform:translateX(40px) scale(.97); } to { opacity:1; transform:translateX(0) scale(1); } }
+    @keyframes slideBack { from { opacity:0; transform:translateX(-40px) scale(.97); } to { opacity:1; transform:translateX(0) scale(1); } }
+
+    /* ── modal ── */
+    .modal-bg   { animation: fadeBg .25s ease both; }
+    @keyframes fadeBg { from { opacity:0; } to { opacity:1; } }
+    .modal-sheet { animation: sheetUp .3s cubic-bezier(.34,1.56,.64,1) both; }
+    @keyframes sheetUp { from { opacity:0; transform:translateY(60px); } to { opacity:1; transform:translateY(0); } }
+
+    /* ── interactive cards ── */
+    .icard { transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; cursor: pointer; }
+    .icard:hover { transform: translateY(-3px) scale(1.02); }
+    .icard:active { transform: scale(.97); }
+
+    /* ── buttons ── */
+    .ibtn { transition: all .15s ease; position: relative; overflow: hidden; }
+    .ibtn:hover { opacity:.85; transform: scale(1.05); }
+    .ibtn:active { transform: scale(.93); }
+    .ibtn::after { content:''; position:absolute; inset:0; background:radial-gradient(circle, rgba(255,255,255,.25) 0%, transparent 70%); opacity:0; transition:opacity .3s; }
+    .ibtn:active::after { opacity:1; }
+
+    /* ── nav arrows ── */
+    .nav-arr { transition: all .15s ease; }
+    .nav-arr:not(:disabled):hover { background: rgba(255,255,255,.12) !important; transform: scale(1.08); }
+    .nav-arr:active { transform: scale(.9); }
+
+    /* ── tab ── */
+    .camp-tab { transition: all .2s ease; position: relative; }
+    .camp-tab::after { content:''; position:absolute; bottom:-1px; left:0; right:0; height:2px; border-radius:2px; transform:scaleX(0); transition:transform .25s ease; }
+    .camp-tab.active::after { transform:scaleX(1); }
+
+    /* ── float ── */
+    .float { animation: float 4s ease-in-out infinite; }
+    @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+
+    /* ── pulse ── */
+    .pulse-dot { animation: pulseDot 2s ease-in-out infinite; }
+    @keyframes pulseDot { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.5;transform:scale(.85);} }
+
+    /* ── glow text ── */
+    .glow-text { text-shadow: 0 0 40px rgba(244,63,94,.5); }
+
+    /* ── bar fill animation ── */
+    .bar-fill { animation: barIn .6s cubic-bezier(.4,0,.2,1) both; }
+    @keyframes barIn { from { width:0 !important; } }
+
+    /* ── intensity dots ── */
+    .dot-fill { animation: dotPop .3s cubic-bezier(.34,1.56,.64,1) both; }
+    @keyframes dotPop { from { transform:scale(0); } to { transform:scale(1); } }
+
+    /* ── scrollbar ── */
+    ::-webkit-scrollbar { width:5px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:rgba(255,255,255,.1); border-radius:4px; }
+
+    /* ── top progress ── */
+    #top-progress { transition: width .4s ease; }
+
+    /* ── autoplay ring ── */
+    .autoplay-ring { animation: spin 4s linear infinite; }
+    @keyframes spin { to { stroke-dashoffset: -100; } }
+
+    /* ── fullscreen ── */
+    .fs-btn { transition: all .18s ease; }
+    .fs-btn:hover { opacity:.85; transform: scale(1.08); background: rgba(255,255,255,.1) !important; }
+    .app-fullscreen { position: fixed !important; inset: 0 !important; z-index: 9999 !important; background: #0d0402 !important; overflow-y: auto; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+const { useState, useEffect, useCallback, useRef } = React;
+
+/* ── coffee detail database ─────────────────────────────────────── */
+const coffeeDB = {
+  expresso: {
+    emoji: '☕', name: 'Espresso',
+    origin: 'Itália · Tradição desde 1901',
+    tagline: 'O clássico que nunca erra.',
+    desc: 'Shot concentrado de 30ml extraído sob pressão de 9 bar com café moído fino. Resulta numa bebida intensa com crema dourada — a base de quase todas as bebidas de café do mundo.',
+    notes: ['Chocolate amargo', 'Caramelo', 'Nozes'],
+    intensity: 5,
+    bestFor: 'Quem precisa de energia imediata logo cedo',
+    promo: '20% OFF toda Segunda e Terça',
+    code: 'EXPRESSO20',
+    days: 'Seg · Ter',
+  },
+  cocoa: {
+    emoji: '🍫', name: 'Cocoa',
+    origin: 'Brasil · Cacau Premium Baiano',
+    tagline: 'Conforto em cada gole.',
+    desc: 'Cacau em pó premium do sul da Bahia misturado com leite integral quente. Textura aveludada e sabor de chocolate meio amargo que reconforta e energiza ao mesmo tempo.',
+    notes: ['Chocolate meio amargo', 'Mel silvestre', 'Canela'],
+    intensity: 2,
+    bestFor: 'Queda de energia no meio da tarde',
+    promo: 'Leve 2, Pague 1 · Qua e Qui',
+    code: 'COCOA2X1',
+    days: 'Qua · Qui',
+  },
+  hotchocolate: {
+    emoji: '🍵', name: 'Hot Chocolate',
+    origin: 'Bélgica · Chocolate 70% Cacau',
+    tagline: 'Pura indulgência no copo.',
+    desc: 'Chocolate belga derretido com leite vaporizado e um toque de creme de leite fresco. Cremosidade irresistível que aquece o corpo e a alma — perfeito para celebrar.',
+    notes: ['Chocolate ao leite', 'Baunilha', 'Creme suave'],
+    intensity: 1,
+    bestFor: 'Celebrar o fim de semana com estilo',
+    promo: '25% OFF tamanho grande · Toda Sexta',
+    code: 'HOTCHOC25',
+    days: 'Sexta',
+  },
+  cortado: {
+    emoji: '🥛', name: 'Cortado',
+    origin: 'Espanha · Técnica Tradicional',
+    tagline: 'Equilíbrio em estado puro.',
+    desc: '"Cortado" significa cortado pelo leite. Espresso com quantidade igual de leite vaporizado: a intensidade do café sem a acidez. Escolha dos verdadeiros apreciadores.',
+    notes: ['Café intenso', 'Leite sedoso', 'Equilíbrio'],
+    intensity: 3,
+    bestFor: 'Quem aprecia sabores refinados',
+    promo: 'Cortado + Brinde Surpresa · Sáb e Dom',
+    code: 'CORTADO',
+    days: 'Sáb · Dom',
+  },
+};
+
+/* ── campaigns ──────────────────────────────────────────────────── */
+const campaigns = [
+  {
+    id: 1, emoji: '⏰', title: 'Horário de Pico', subtitle: '10h da Manhã',
+    accent: '#e8913a', bg: '#2c1505',
+    slides: [
+      {
+        type: 'cover', badge: 'Campanha 1 · Horário de Pico',
+        headline: ['Seu Café Mais', 'Poderoso às', '10h da Manhã ☕'],
+        sub: 'Boost de Energia + Desconto Especial no horário certo.',
+        visual: () => (
+          <div className="flex flex-col items-center gap-5">
+            <div className="float text-8xl drop-shadow-lg">☕</div>
+            <div className="icard flex items-center gap-4 bg-white/8 border border-white/15 rounded-2xl px-6 py-4"
+                 style={{background:'rgba(255,255,255,.06)'}}>
+              <span className="text-4xl">🕙</span>
+              <div>
+                <div className="text-3xl font-black text-[#e8913a] leading-none">10:00</div>
+                <div className="text-xs text-white/50 uppercase tracking-widest mt-1">Horário de Pico</div>
+              </div>
+            </div>
+            <div className="text-xs text-white/25 tracking-wider">349 vendas só nesse horário</div>
+          </div>
+        ),
+      },
+      {
+        type: 'problem', badge: 'O Problema',
+        headline: ['O Café Certo', 'No Momento Certo', 'Muda Tudo.'],
+        sub: 'Muita gente toma café sem pensar no timing — e perde o melhor da bebida.',
+        visual: () => (
+          <div className="grid grid-cols-2 gap-3 w-full max-w-sm">
+            {[
+              { icon:'😴', label:'Antes das 9h', desc:'Cortisol alto, café menos eficaz' },
+              { icon:'⚡', label:'Entre 9h-10h', desc:'Janela ideal de absorção' },
+              { icon:'✅', label:'10h exatas', desc:'Pico de energia garantido', hi:true },
+              { icon:'📉', label:'Depois das 11h', desc:'Efeito reduzido' },
+            ].map((it, x) => (
+              <div key={x} className={`icard rounded-xl p-3 text-center border ${it.hi ? 'border-[#e8913a]/60' : 'border-white/8'}`}
+                   style={{ background: it.hi ? 'rgba(232,145,58,.12)' : 'rgba(255,255,255,.04)' }}>
+                <div className="text-2xl mb-1">{it.icon}</div>
+                <div className="text-xs font-bold" style={{color: it.hi ? '#e8913a' : 'rgba(255,255,255,.75)'}}>{it.label}</div>
+                <div className="text-[10px] text-white/35 mt-1">{it.desc}</div>
+              </div>
+            ))}
+          </div>
+        ),
+      },
+      {
+        type: 'data', badge: 'A Prova',
+        headline: ['349 Vendas', 'Num Único', 'Horário.'],
+        sub: 'Das 3.636 transações do mês, 349 acontecem às 10h. Os clientes já sabem.',
+        visual: () => (
+          <div className="w-full max-w-xs">
+            <div className="text-xs text-white/30 uppercase tracking-widest mb-3">Vendas por horário</div>
+            {[
+              { h:'8h', v:120, pct:34 }, { h:'9h', v:210, pct:60 },
+              { h:'10h', v:349, pct:100, hi:true }, { h:'11h', v:195, pct:56 }, { h:'12h', v:280, pct:80 },
+            ].map((r, i) => (
+              <div key={i} className="flex items-center gap-3 mb-2 group">
+                <div className="text-xs text-white/40 w-7">{r.h}</div>
+                <div className="flex-1 h-7 bg-white/4 rounded-lg overflow-hidden">
+                  <div className="bar-fill h-full rounded-lg flex items-center pl-2 text-xs font-bold"
+                       style={{ animationDelay:`${i*80}ms`, width:`${r.pct}%`,
+                         background: r.hi ? '#e8913a' : 'rgba(255,255,255,.1)',
+                         color: r.hi ? '#fff' : 'rgba(255,255,255,.45)' }}>
+                    {r.v}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ),
+      },
+      {
+        type: 'offer', badge: 'A Oferta',
+        headline: ['15% OFF', 'Entre 9h30', 'e 10h30 ⏳'],
+        sub: 'Venha no horário certo e economize. Válido todos os dias.',
+        visual: () => (
+          <div className="icard bg-white/4 border-2 border-[#e8913a]/50 rounded-2xl p-6 text-center w-full max-w-xs"
+               style={{boxShadow:'0 0 40px rgba(232,145,58,.12)'}}>
+            <div className="text-5xl mb-3">🎟️</div>
+            <div className="text-xs uppercase tracking-widest text-[#e8913a] mb-2 font-bold">Cupom do Dia</div>
+            <div className="text-5xl font-black text-white mb-1">15% <span className="text-[#e8913a]">OFF</span></div>
+            <div className="text-sm text-white/40 mb-4">Qualquer café entre 9h30 – 10h30</div>
+            <div className="border-t border-white/8 pt-4">
+              <div className="font-mono text-lg font-bold text-[#e8913a] tracking-widest bg-black/30 rounded-lg py-2">PICO10</div>
+              <div className="text-xs text-white/25 mt-2">Mostre este código no caixa</div>
+            </div>
+          </div>
+        ),
+      },
+      {
+        type: 'cta', badge: 'Ação',
+        headline: ['Marque na', 'Agenda. 📅', 'A Gente Espera!'],
+        sub: 'Seu café das 10h está te esperando. Todo dia, 15% mais barato.',
+        visual: () => (
+          <div className="flex flex-col items-center gap-4 w-full max-w-xs">
+            <div className="float text-7xl">🗓️</div>
+            <div className="icard w-full bg-[#e8913a] rounded-2xl p-4 text-center"
+                 style={{boxShadow:'0 8px 32px rgba(232,145,58,.35)'}}>
+              <div className="text-white font-black text-lg">Próximas 10h</div>
+              <div className="text-white/80 text-sm mt-1">Você + Café = ⚡ Energia</div>
+            </div>
+            <div className="grid grid-cols-2 gap-3 w-full">
+              {[{icon:'📱',label:'Salvar lembrete'},{icon:'👥',label:'Chamar amigos'}].map((b,i)=>(
+                <div key={i} className="icard bg-white/5 border border-white/8 rounded-xl p-3 text-center">
+                  <div className="text-xl">{b.icon}</div>
+                  <div className="text-xs text-white/45 mt-1">{b.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ),
+      },
+    ],
+  },
+
+  {
+    id: 2, emoji: '🗓️', title: 'Especial da Semana', subtitle: 'Um Café por Dia',
+    accent: '#8b5cf6', bg: '#060212',
+    slides: [
+      {
+        type: 'cover', badge: 'Campanha 2 · Promoção Semanal',
+        headline: ['Todo Dia', 'Um Café', 'Especial. ✨'],
+        sub: 'Clique em cada café para descobrir a história e a promoção do dia.',
+        visual: (openCoffee) => (
+          <div className="flex flex-col items-center gap-4 w-full max-w-xs">
+            <div className="grid grid-cols-2 gap-3 w-full">
+              {[
+                { key:'expresso',      emoji:'☕', name:'Espresso',      days:'Seg · Ter' },
+                { key:'cocoa',         emoji:'🍫', name:'Cocoa',         days:'Qua · Qui' },
+                { key:'hotchocolate',  emoji:'🍵', name:'Hot Chocolate', days:'Sexta'     },
+                { key:'cortado',       emoji:'🥛', name:'Cortado',       days:'Sáb · Dom' },
+              ].map((c) => (
+                <button key={c.key} onClick={() => openCoffee(c.key)}
+                  className="icard bg-white/5 border border-[#8b5cf6]/30 rounded-xl p-3 text-center group hover:border-[#8b5cf6]/70"
+                  style={{boxShadow:'0 0 0 0 rgba(139,92,246,0)', transition:'all .2s ease'}}>
+                  <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">{c.emoji}</div>
+                  <div className="text-xs font-bold text-white/80 group-hover:text-white">{c.name}</div>
+                  <div className="text-[10px] font-semibold mt-1 text-[#8b5cf6]">{c.days}</div>
+                  <div className="text-[9px] text-white/25 mt-1.5 group-hover:text-white/50">toque para ver ↗</div>
+                </button>
+              ))}
+            </div>
+            <div className="text-white/25 text-xs tracking-wider">promoção nova toda semana</div>
+          </div>
+        ),
+      },
+      {
+        type: 'seg-ter', badge: 'Segunda & Terça',
+        headline: ['Espresso:', 'Energia Para', 'Começar. ⚡'],
+        sub: 'Nos primeiros dias da semana, o Espresso chega com desconto especial.',
+        visual: (openCoffee) => (
+          <div className="flex flex-col items-center gap-4 w-full max-w-xs">
+            <button onClick={() => openCoffee('expresso')}
+              className="float text-7xl hover:scale-110 transition-transform active:scale-95">☕</button>
+            <div className="icard w-full bg-white/5 border-2 border-[#8b5cf6]/50 rounded-2xl p-5 text-center">
+              <div className="text-xs uppercase tracking-widest font-bold mb-1 text-[#8b5cf6]">Desconto Especial</div>
+              <div className="text-5xl font-black text-white">20% <span className="text-[#8b5cf6]">OFF</span></div>
+              <div className="text-white/45 text-sm mt-1">No Espresso toda Seg e Ter</div>
+            </div>
+            <button onClick={() => openCoffee('expresso')}
+              className="ibtn text-xs font-bold text-[#8b5cf6] border border-[#8b5cf6]/40 rounded-full px-4 py-2 hover:bg-[#8b5cf6]/10">
+              ✦ Ver detalhes do Espresso
+            </button>
+          </div>
+        ),
+      },
+      {
+        type: 'qua-qui', badge: 'Quarta & Quinta',
+        headline: ['Cocoa:', 'Conforto No', 'Meio da Semana. 🍫'],
+        sub: 'Chegou a queda de tarde? O Cocoa quente resolve.',
+        visual: (openCoffee) => (
+          <div className="flex flex-col items-center gap-4 w-full max-w-xs">
+            <button onClick={() => openCoffee('cocoa')}
+              className="float text-7xl hover:scale-110 transition-transform active:scale-95">🍫</button>
+            <div className="icard w-full bg-white/5 border-2 border-[#8b5cf6]/50 rounded-2xl p-5 text-center">
+              <div className="text-xs uppercase tracking-widest font-bold mb-1 text-[#8b5cf6]">Promoção Exclusiva</div>
+              <div className="text-5xl font-black text-white">Leve <span className="text-[#8b5cf6]">2</span></div>
+              <div className="text-white/45 text-sm mt-1">Pague 1 · Cocoa Qua e Qui</div>
+            </div>
+            <button onClick={() => openCoffee('cocoa')}
+              className="ibtn text-xs font-bold text-[#8b5cf6] border border-[#8b5cf6]/40 rounded-full px-4 py-2 hover:bg-[#8b5cf6]/10">
+              ✦ Ver detalhes do Cocoa
+            </button>
+          </div>
+        ),
+      },
+      {
+        type: 'sex', badge: 'Sexta-Feira',
+        headline: ['Hot Chocolate:', 'Celebre o', 'Fim da Semana. 🎉'],
+        sub: 'Você chegou até sexta. Merece um Hot Chocolate cremoso.',
+        visual: (openCoffee) => (
+          <div className="flex flex-col items-center gap-4 w-full max-w-xs">
+            <button onClick={() => openCoffee('hotchocolate')}
+              className="float text-7xl hover:scale-110 transition-transform active:scale-95">🍵</button>
+            <div className="icard w-full bg-white/5 border-2 border-[#8b5cf6]/50 rounded-2xl p-5 text-center">
+              <div className="text-xs uppercase tracking-widest font-bold mb-1 text-[#8b5cf6]">Só na Sexta</div>
+              <div className="text-5xl font-black text-white">25% <span className="text-[#8b5cf6]">OFF</span></div>
+              <div className="text-white/45 text-sm mt-1">Hot Chocolate tamanho grande</div>
+            </div>
+            <button onClick={() => openCoffee('hotchocolate')}
+              className="ibtn text-xs font-bold text-[#8b5cf6] border border-[#8b5cf6]/40 rounded-full px-4 py-2 hover:bg-[#8b5cf6]/10">
+              ✦ Ver detalhes do Hot Chocolate
+            </button>
+          </div>
+        ),
+      },
+      {
+        type: 'fds', badge: 'Sábado & Domingo',
+        headline: ['Cortado:', 'O Fim de', 'Semana Perfeito. 🤍'],
+        sub: 'Espresso com toque de leite vaporizado. Requinte no copo, desconto no bolso.',
+        visual: (openCoffee) => (
+          <div className="flex flex-col items-center gap-4 w-full max-w-xs">
+            <button onClick={() => openCoffee('cortado')}
+              className="float text-7xl hover:scale-110 transition-transform active:scale-95">🥛</button>
+            <div className="icard w-full bg-[#8b5cf6] rounded-2xl p-5 text-center"
+                 style={{boxShadow:'0 8px 32px rgba(139,92,246,.35)'}}>
+              <div className="text-white/70 text-xs uppercase tracking-widest font-bold mb-1">Fim de Semana Especial</div>
+              <div className="text-3xl font-black text-white">Cortado + Brinde</div>
+              <div className="text-white/70 text-sm mt-1">Surpresa no sábado e domingo</div>
+            </div>
+            <button onClick={() => openCoffee('cortado')}
+              className="ibtn text-xs font-bold text-[#8b5cf6] border border-[#8b5cf6]/40 rounded-full px-4 py-2 hover:bg-[#8b5cf6]/10">
+              ✦ Ver detalhes do Cortado
+            </button>
+          </div>
+        ),
+      },
+    ],
+  },
+
+  {
+    id: 3, emoji: '🔥', title: 'Terça É Nosso Dia', subtitle: '585 Vendas',
+    accent: '#f43f5e', bg: '#0f0206',
+    slides: [
+      {
+        type: 'cover', badge: 'Campanha 3 · Terça-feira',
+        headline: ['Terça-Feira', 'É Nosso', 'Dia. 🔥'],
+        sub: 'O dia com maior movimento da semana — e você ainda não sabe por quê.',
+        visual: () => (
+          <div className="flex flex-col items-center gap-3">
+            <div className="text-xs font-bold uppercase tracking-widest text-[#f43f5e] pulse-dot">Recorde Semanal</div>
+            <div className="glow-text text-9xl font-black text-white leading-none">585</div>
+            <div className="text-white/40 text-sm">vendas numa única terça-feira</div>
+            <div className="flex gap-1 mt-1">
+              {['🔥','🔥','🔥'].map((e,i)=><span key={i} className="text-2xl">{e}</span>)}
+            </div>
+          </div>
+        ),
+      },
+      {
+        type: 'insight', badge: 'O Insight',
+        headline: ['585 Vendas.', 'Terça Bate', 'Todo Mundo. 📊'],
+        sub: 'Analisamos todos os dias da semana. Terça vence de longe.',
+        visual: () => (
+          <div className="w-full max-w-xs">
+            <div className="text-xs text-white/30 uppercase tracking-widest mb-3">Vendas por dia</div>
+            {[
+              { d:'Seg', v:420 }, { d:'Ter', v:585, hi:true },
+              { d:'Qua', v:510 }, { d:'Qui', v:498 },
+              { d:'Sex', v:540 }, { d:'Sáb', v:390 }, { d:'Dom', v:293 },
+            ].map((r,i) => (
+              <div key={i} className="flex items-center gap-3 mb-2 group">
+                <div className="text-xs text-white/40 w-7">{r.d}</div>
+                <div className="flex-1 h-7 bg-white/4 rounded-lg overflow-hidden">
+                  <div className="bar-fill h-full rounded-lg flex items-center pl-2 text-xs font-bold"
+                       style={{ animationDelay:`${i*60}ms`, width:`${Math.round((r.v/585)*100)}%`,
+                         background: r.hi ? '#f43f5e' : 'rgba(255,255,255,.1)',
+                         color: r.hi ? '#fff' : 'rgba(255,255,255,.4)' }}>
+                    {r.v}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ),
+      },
+      {
+        type: 'community', badge: 'Comunidade',
+        headline: ['Todo Mundo', 'Vem na Terça.', 'Você Quer Estar Lá? 👥'],
+        sub: 'Nossos clientes mais fiéis fazem da terça um ritual.',
+        visual: () => (
+          <div className="flex flex-col items-center gap-4 w-full max-w-xs">
+            <div className="grid grid-cols-5 gap-1">
+              {Array.from({length:25}).map((_,i) => (
+                <div key={i} className="icard w-10 h-10 rounded-full flex items-center justify-center text-lg"
+                     style={{ background: i < 20 ? 'rgba(244,63,94,.15)' : 'rgba(255,255,255,.04)',
+                       border: i < 20 ? '1px solid rgba(244,63,94,.35)' : '1px solid rgba(255,255,255,.08)' }}>
+                  {['👩','👨','🧔','👧','🧑'][i%5]}
+                </div>
+              ))}
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-black text-[#f43f5e]">585</div>
+              <div className="text-xs text-white/35">pessoas na última terça</div>
+            </div>
+          </div>
+        ),
+      },
+      {
+        type: 'promo', badge: 'A Promoção',
+        headline: ['Terça Com', 'Brinde Exclusivo', 'ou 20% OFF. 🎁'],
+        sub: 'Toda terça-feira você escolhe: brinde surpresa ou 20% em combos.',
+        visual: () => (
+          <div className="flex gap-3 w-full max-w-sm">
+            {[
+              { icon:'🎁', tag:'Opção A', title:'Brinde Surpresa', desc:'Novo a cada semana' },
+              { icon:'💸', tag:'Opção B', title:'20% OFF', desc:'Em qualquer combo' },
+            ].map((op,i) => (
+              <div key={i} className="icard flex-1 bg-white/4 border-2 border-[#f43f5e]/40 rounded-2xl p-4 text-center"
+                   style={{boxShadow:'0 0 24px rgba(244,63,94,.08)'}}>
+                <div className="text-4xl mb-2">{op.icon}</div>
+                <div className="text-xs uppercase tracking-widest text-[#f43f5e] font-bold mb-1">{op.tag}</div>
+                <div className="text-sm font-black text-white">{op.title}</div>
+                <div className="text-xs text-white/35 mt-2">{op.desc}</div>
+              </div>
+            ))}
+          </div>
+        ),
+      },
+      {
+        type: 'cta', badge: 'Ação',
+        headline: ['Próxima Terça', 'É Sua!', 'Reserve Já. 📅'],
+        sub: 'Terça-feira tem café, desconto e comunidade — tudo junto.',
+        visual: () => (
+          <div className="flex flex-col items-center gap-4 w-full max-w-xs">
+            <div className="float text-7xl">🔥</div>
+            <div className="icard w-full bg-[#f43f5e] rounded-2xl p-5 text-center"
+                 style={{boxShadow:'0 8px 32px rgba(244,63,94,.35)'}}>
+              <div className="text-white font-black text-xl">Reserve seu café!</div>
+              <div className="text-white/80 text-sm mt-1">Toda terça tem surpresa</div>
+            </div>
+            <div className="grid grid-cols-2 gap-3 w-full">
+              {[{icon:'📲',label:'WhatsApp'},{icon:'📍',label:'Nos encontre'}].map((b,i)=>(
+                <div key={i} className="icard bg-white/5 border border-white/8 rounded-xl p-3 text-center">
+                  <div className="text-lg">{b.icon}</div>
+                  <div className="text-xs text-white/40 mt-1">{b.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ),
+      },
+    ],
+  },
+];
+
+/* ── Coffee Modal ────────────────────────────────────────────────── */
+function CoffeeModal({ coffeeKey, onClose }) {
+  const c = coffeeDB[coffeeKey];
+  if (!c) return null;
+  return (
+    <div className="modal-bg fixed inset-0 z-50 flex items-end justify-center"
+         onClick={onClose} style={{background:'rgba(0,0,0,.65)', backdropFilter:'blur(6px)'}}>
+      <div className="modal-sheet relative w-full max-w-lg rounded-t-3xl overflow-hidden"
+           onClick={e => e.stopPropagation()}
+           style={{background:'linear-gradient(160deg,#12063a,#0d0520)', border:'1px solid rgba(139,92,246,.25)', borderBottom:'none'}}>
+
+        {/* handle */}
+        <div className="flex justify-center pt-3 pb-1">
+          <div className="w-10 h-1 rounded-full bg-white/15"/>
+        </div>
+
+        {/* header */}
+        <div className="flex items-start gap-4 px-6 pt-3 pb-4">
+          <div className="text-6xl leading-none">{c.emoji}</div>
+          <div className="flex-1 min-w-0">
+            <div className="text-xs font-bold uppercase tracking-wider text-[#8b5cf6] mb-1">{c.origin}</div>
+            <div className="text-2xl font-black text-white leading-tight">{c.name}</div>
+            <div className="text-sm text-white/45 italic mt-0.5">{c.tagline}</div>
+          </div>
+          <button onClick={onClose}
+            className="ibtn w-8 h-8 flex items-center justify-center rounded-full text-white/30 hover:text-white hover:bg-white/10 text-xl leading-none flex-shrink-0">
+            ×
+          </button>
+        </div>
+
+        {/* description */}
+        <div className="px-6 pb-4">
+          <p className="text-sm text-white/55 leading-relaxed">{c.desc}</p>
+        </div>
+
+        {/* flavor notes */}
+        <div className="px-6 pb-4">
+          <div className="text-xs text-white/25 uppercase tracking-widest mb-2">Notas de sabor</div>
+          <div className="flex gap-2 flex-wrap">
+            {c.notes.map((n,i) => (
+              <span key={i} className="text-xs font-semibold px-3 py-1 rounded-full"
+                style={{background:'rgba(139,92,246,.12)', border:'1px solid rgba(139,92,246,.35)', color:'#8b5cf6'}}>
+                {n}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* intensity */}
+        <div className="px-6 pb-4">
+          <div className="text-xs text-white/25 uppercase tracking-widest mb-2">Intensidade</div>
+          <div className="flex gap-2 items-center">
+            {[1,2,3,4,5].map(i => (
+              <div key={i} className="dot-fill h-2 rounded-full transition-all"
+                   style={{ animationDelay:`${i*60}ms`, width: i <= c.intensity ? '28px' : '10px',
+                     background: i <= c.intensity ? '#8b5cf6' : 'rgba(255,255,255,.08)' }}/>
+            ))}
+            <span className="text-xs text-white/25 ml-1">{c.intensity}/5</span>
+          </div>
+        </div>
+
+        {/* best for */}
+        <div className="px-6 pb-4">
+          <div className="text-xs text-white/25 uppercase tracking-widest mb-1">Ideal para</div>
+          <div className="text-sm text-white/65">✦ {c.bestFor}</div>
+        </div>
+
+        {/* promo */}
+        <div className="mx-6 mb-6 rounded-2xl p-4"
+             style={{background:'rgba(139,92,246,.1)', border:'1px solid rgba(139,92,246,.28)'}}>
+          <div className="text-xs text-[#8b5cf6] font-bold uppercase tracking-wider mb-1.5">
+            🎉 Promoção · {c.days}
+          </div>
+          <div className="text-white font-bold text-sm mb-2">{c.promo}</div>
+          <div className="font-mono text-sm font-bold text-[#8b5cf6] bg-black/30 rounded-lg px-3 py-1.5 inline-block tracking-widest">
+            {c.code}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── slide label map ─────────────────────────────────────────────── */
+const slideLabel = { cover:'Capa', problem:'Problema', data:'Dados', offer:'Oferta', cta:'CTA',
+  'seg-ter':'Seg & Ter', 'qua-qui':'Qua & Qui', sex:'Sexta', fds:'Fim de Semana',
+  insight:'Insight', community:'Comunidade', promo:'Promoção' };
+
+/* ── App ─────────────────────────────────────────────────────────── */
+function App() {
+  const [activeCamp, setActiveCamp]   = useState(0);
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [dir, setDir]                 = useState('fwd');
+  const [animKey, setAnimKey]         = useState(0);
+  const [coffeeOpen, setCoffeeOpen]   = useState(null);
+  const [autoPlay, setAutoPlay]       = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const touchX = useRef(null);
+  const autoRef = useRef(null);
+
+  const appRef = useRef(null);
+
+  const toggleFullscreen = useCallback(() => {
+    setIsFullscreen(fs => {
+      const next = !fs;
+      if (appRef.current) {
+        appRef.current.classList.toggle('app-fullscreen', next);
+      }
+      return next;
+    });
+  }, []);
+
+  const camp  = campaigns[activeCamp];
+  const slide = camp.slides[activeSlide];
+  const total = camp.slides.length;
+  const accent = camp.accent;
+
+  const goSlide = useCallback((delta) => {
+    const next = activeSlide + delta;
+    if (next < 0 || next >= total) return;
+    setDir(delta > 0 ? 'fwd' : 'back');
+    setAnimKey(k => k + 1);
+    setActiveSlide(next);
+  }, [activeSlide, total]);
+
+  const jumpSlide = (i) => {
+    setDir(i > activeSlide ? 'fwd' : 'back');
+    setAnimKey(k => k + 1);
+    setActiveSlide(i);
+  };
+
+  const switchCamp = (i) => {
+    setActiveCamp(i);
+    setActiveSlide(0);
+    setDir('fwd');
+    setAnimKey(k => k + 1);
+    setAutoPlay(false);
+  };
+
+  /* keyboard */
+  useEffect(() => {
+    const h = (e) => {
+      if (coffeeOpen) { if (e.key === 'Escape') setCoffeeOpen(null); return; }
+      if (e.key === 'Escape' && isFullscreen) { toggleFullscreen(); return; }
+      if (e.key === 'ArrowRight' || e.key === ' ') goSlide(1);
+      if (e.key === 'ArrowLeft') goSlide(-1);
+      if (e.key === '1') switchCamp(0);
+      if (e.key === '2') switchCamp(1);
+      if (e.key === '3') switchCamp(2);
+      if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+    };
+    window.addEventListener('keydown', h);
+    return () => window.removeEventListener('keydown', h);
+  }, [goSlide, coffeeOpen, isFullscreen, toggleFullscreen]);
+
+  /* autoplay */
+  useEffect(() => {
+    if (!autoPlay) { clearInterval(autoRef.current); return; }
+    autoRef.current = setInterval(() => {
+      setActiveSlide(s => {
+        if (s + 1 >= total) { setAutoPlay(false); return s; }
+        setDir('fwd'); setAnimKey(k => k + 1);
+        return s + 1;
+      });
+    }, 3500);
+    return () => clearInterval(autoRef.current);
+  }, [autoPlay, total]);
+
+  /* swipe handlers */
+  const onTouchStart = (e) => { touchX.current = e.touches[0].clientX; };
+  const onTouchEnd   = (e) => {
+    if (touchX.current === null) return;
+    const dx = touchX.current - e.changedTouches[0].clientX;
+    if (Math.abs(dx) > 40) goSlide(dx > 0 ? 1 : -1);
+    touchX.current = null;
+  };
+
+  /* top progress */
+  const totalSlides = campaigns.reduce((a, c) => a + c.slides.length, 0);
+  const doneSlides  = campaigns.slice(0, activeCamp).reduce((a, c) => a + c.slides.length, 0) + activeSlide + 1;
+  const topPct      = Math.round((doneSlides / totalSlides) * 100);
+
+  const bgMap = { '#2c1505': '#2c1505', '#060212': '#060212', '#0f0206': '#0f0206' };
+  const slideBg = bgMap[camp.bg] || '#0d0402';
+
+  /* ── shared slide card ── */
+  const SlideCard = ({PresMode }) => (
+    <div key={`${activeCamp}-${activeSlide}-${animKey}`}
+         className={`w-full ${dir === 'fwd' ? 'slide-fwd' : 'slide-back'} ${PresMode ? 'max-w-5xl' : 'max-w-2xl'}`}>
+      <div className="relative rounded-3xl overflow-hidden"
+           style={{ background: `linear-gradient(145deg, ${slideBg} 0%, #0d0402 100%)`,
+             border:'1px solid rgba(255,255,255,.07)',
+             boxShadow:`0 0 60px ${accent}18, 0 24px 48px rgba(0,0,0,.5)`,
+             minHeight: PresMode ? '520px' : '420px' }}>
+        <div className="absolute top-0 left-0 right-0 h-px" style={{background:accent}}/>
+        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-80 h-40 rounded-full blur-3xl pointer-events-none"
+             style={{background:accent, opacity:.12}}/>
+        <div className={`relative z-10 flex flex-col md:flex-row gap-8 ${PresMode ? 'p-6 md:p-12 min-h-[420px] md:min-h-[520px]' : 'p-7 md:p-10 min-h-[420px]'}`}>
+          <div className="flex-1 flex flex-col justify-center">
+            <div className="inline-flex items-center gap-2 mb-5">
+              <div className="w-2 h-2 rounded-full pulse-dot" style={{background:accent}}/>
+              <span className={`uppercase tracking-widest font-bold ${PresMode ? 'text-sm' : 'text-xs'}`} style={{color:accent}}>
+                {slide.badge}
+              </span>
+            </div>
+            <h1 className={`font-black leading-tight text-white mb-4 ${PresMode ? 'text-3xl md:text-5xl lg:text-6xl' : 'text-3xl md:text-4xl'}`}>
+              {slide.headline.map((line,i) => (
+                <span key={i} className="block">
+                  {i === 1 ? <em className="not-italic" style={{color:accent}}>{line}</em> : line}
+                </span>
+              ))}
+            </h1>
+            <p className={`text-white/45 leading-relaxed max-w-sm ${PresMode ? 'text-sm md:text-lg' : 'text-sm md:text-base'}`}>{slide.sub}</p>
+          </div>
+          <div className="flex-1 flex items-center justify-center">
+            {typeof slide.visual === 'function'
+              ? slide.visual((key) => setCoffeeOpen(key))
+              : slide.visual}
+          </div>
+        </div>
+        <div className="absolute bottom-4 right-5 text-xs font-bold tracking-widest"
+             style={{color:`${accent}50`}}>
+          {String(activeSlide+1).padStart(2,'0')} / {String(total).padStart(2,'0')}
+        </div>
+      </div>
+    </div>
+  );
+
+  /* ── MODO APRESENTAÇÃO ── */
+  if (isFullscreen) return (
+    <div ref={appRef} className="fixed inset-0 z-[9999] flex flex-col items-center justify-center select-none"
+         style={{background:'#0d0402'}}
+         onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+
+      {/* barra superior: campanha + sair */}
+      <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-8 py-4 z-10"
+           style={{background:'linear-gradient(to bottom, rgba(13,4,2,.9), transparent)'}}>
+        <div className="flex items-center gap-3">
+          <span className="text-xl">{camp.emoji}</span>
+          <span className="text-white/60 text-sm font-semibold">{camp.title}</span>
+          <span className="text-white/20 text-sm">·</span>
+          <span className="text-white/35 text-sm">Slide {activeSlide+1} de {total}</span>
+        </div>
+        <button onClick={toggleFullscreen}
+          className="ibtn flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold"
+          style={{background:'rgba(255,255,255,.07)', border:'1px solid rgba(255,255,255,.15)', color:'rgba(255,255,255,.5)'}}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="8 3 3 3 3 8"/><polyline points="21 8 21 3 16 3"/>
+            <polyline points="3 16 3 21 8 21"/><polyline points="16 21 21 21 21 16"/>
+          </svg>
+          Sair · Esc
+        </button>
+      </div>
+
+      {/* slide central */}
+      <div className="w-full px-4 md:px-16 flex items-center justify-center">
+        <SlideCard PresMode={true} />
+      </div>
+
+      {/* navegação flutuante na base */}
+      <div className="absolute bottom-0 left-0 right-0 flex flex-col items-center gap-3 pb-6 pt-10"
+           style={{background:'linear-gradient(to top, rgba(13,4,2,.9), transparent)'}}>
+        <div className="flex items-center gap-6">
+          <button onClick={() => goSlide(-1)} disabled={activeSlide === 0}
+            className="nav-arr w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold disabled:opacity-20 disabled:cursor-not-allowed"
+            style={{background:'rgba(255,255,255,.08)', border:'1px solid rgba(255,255,255,.12)', color:'rgba(255,255,255,.7)'}}>
+            ←
+          </button>
+          <div className="flex items-center gap-2">
+            {camp.slides.map((_,i) => (
+              <button key={i} onClick={() => jumpSlide(i)}
+                className="rounded-full transition-all duration-200 hover:opacity-80"
+                style={{ height:'7px', width: i === activeSlide ? '24px' : '7px',
+                  background: i === activeSlide ? accent : 'rgba(255,255,255,.2)' }}/>
+            ))}
+          </div>
+          <button onClick={() => goSlide(1)} disabled={activeSlide === total-1}
+            className="nav-arr w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold disabled:opacity-20 disabled:cursor-not-allowed"
+            style={{background:'rgba(255,255,255,.08)', border:'1px solid rgba(255,255,255,.12)', color:'rgba(255,255,255,.7)'}}>
+            →
+          </button>
+        </div>
+        {/* mini tabs de campanha */}
+        <div className="flex items-center gap-2 flex-wrap justify-center px-4">
+          {campaigns.map((c,i) => (
+            <button key={c.id} onClick={() => switchCamp(i)}
+              className="ibtn flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
+              style={{ background: activeCamp === i ? `${c.accent}20` : 'rgba(255,255,255,.04)',
+                border: `1px solid ${activeCamp === i ? c.accent : 'rgba(255,255,255,.08)'}`,
+                color: activeCamp === i ? c.accent : 'rgba(255,255,255,.3)' }}>
+              {c.emoji} {c.title}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {coffeeOpen && <CoffeeModal coffeeKey={coffeeOpen} onClose={() => setCoffeeOpen(null)} />}
+    </div>
+  );
+
+  /* ── MODO NORMAL ── */
+  return (
+    <div ref={appRef} className="min-h-screen flex flex-col select-none" style={{background:'#0d0402'}}>
+
+      {/* top progress bar */}
+      <div className="h-0.5 bg-white/5 flex-shrink-0">
+        <div id="top-progress" className="h-full rounded-full" style={{width:`${topPct}%`, background:accent}}/>
+      </div>
+
+      {/* header */}
+      <div className="flex items-center justify-between px-5 py-3 border-b border-white/5 flex-shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="text-xl">☕</div>
+          <div>
+            <div className="text-white font-black text-sm">Cafeteria</div>
+            <div className="text-white/25 text-xs">Dashboard de Campanhas</div>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <button onClick={() => setAutoPlay(p => !p)}
+            className="ibtn flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all"
+            style={{ background: autoPlay ? `${accent}20` : 'rgba(255,255,255,.05)',
+              border: `1px solid ${autoPlay ? accent : 'rgba(255,255,255,.1)'}`,
+              color: autoPlay ? accent : 'rgba(255,255,255,.35)' }}>
+            {autoPlay ? '⏸ Pausar' : '▶ Auto'}
+          </button>
+          <button onClick={toggleFullscreen} title="Apresentação (F)"
+            className="fs-btn flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold"
+            style={{ background:'rgba(255,255,255,.05)', border:'1px solid rgba(255,255,255,.1)', color:'rgba(255,255,255,.5)' }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+              <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+            </svg>
+            Apresentar
+          </button>
+          <div className="hidden sm:flex items-center gap-3 text-xs text-white/20">
+            <span>3.636 transações</span><span>·</span><span>3 campanhas</span>
+          </div>
+        </div>
+      </div>
+
+      {/* tabs */}
+      <div className="flex border-b border-white/5 flex-shrink-0 overflow-x-auto">
+        {campaigns.map((c, i) => (
+          <button key={c.id} onClick={() => switchCamp(i)}
+            className={`camp-tab flex items-center gap-2 px-5 py-3 text-sm font-semibold whitespace-nowrap flex-shrink-0 ${activeCamp === i ? 'active' : ''}`}
+            style={{
+              color: activeCamp === i ? '#fff' : 'rgba(255,255,255,.35)',
+              borderBottom: activeCamp === i ? `2px solid ${c.accent}` : '2px solid transparent',
+            }}>
+            <span>{c.emoji}</span>
+            <span className="hidden sm:inline">{c.title}</span>
+            <span className="inline sm:hidden">{c.id}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* body */}
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+
+        {/* main slide area */}
+        <div className="flex-1 flex flex-col items-center justify-center p-5 lg:p-10"
+             onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+          <SlideCard PresMode={false} />
+
+          {/* navigation */}
+          <div className="flex items-center gap-5 mt-5">
+            <button onClick={() => goSlide(-1)} disabled={activeSlide === 0}
+              className="nav-arr w-11 h-11 rounded-full flex items-center justify-center text-lg font-bold disabled:opacity-20 disabled:cursor-not-allowed"
+              style={{background:'rgba(255,255,255,.06)', border:'1px solid rgba(255,255,255,.1)', color:'rgba(255,255,255,.6)'}}>
+              ←
+            </button>
+            <div className="flex items-center gap-2">
+              {camp.slides.map((_,i) => (
+                <button key={i} onClick={() => jumpSlide(i)}
+                  className="rounded-full transition-all duration-200 hover:opacity-80"
+                  style={{ height:'6px', width: i === activeSlide ? '20px' : '6px',
+                    background: i === activeSlide ? accent : 'rgba(255,255,255,.15)' }}/>
+              ))}
+            </div>
+            <button onClick={() => goSlide(1)} disabled={activeSlide === total-1}
+              className="nav-arr w-11 h-11 rounded-full flex items-center justify-center text-lg font-bold disabled:opacity-20 disabled:cursor-not-allowed"
+              style={{background:'rgba(255,255,255,.06)', border:'1px solid rgba(255,255,255,.1)', color:'rgba(255,255,255,.6)'}}>
+              →
+            </button>
+          </div>
+          <div className="mt-3 text-xs text-white/20">
+            Slide {activeSlide+1} de {total} · ← → teclado · F apresentar
+          </div>
+        </div>
+
+        {/* sidebar */}
+        <div className="w-full lg:w-56 border-t lg:border-t-0 lg:border-l border-white/5 p-3 flex flex-col gap-1 overflow-y-auto flex-shrink-0">
+          <div className="text-xs uppercase tracking-widest text-white/20 font-bold px-2 mb-1">
+            {camp.emoji} {camp.title}
+          </div>
+
+          {camp.slides.map((s, i) => (
+            <button key={i} onClick={() => jumpSlide(i)}
+              className="ibtn text-left px-3 py-2.5 rounded-xl transition-all"
+              style={{ background: activeSlide === i ? `${accent}12` : 'transparent',
+                border: activeSlide === i ? `1px solid ${accent}35` : '1px solid transparent' }}>
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0"
+                     style={{background: activeSlide === i ? accent : 'rgba(255,255,255,.06)', color:'#fff'}}>
+                  {i+1}
+                </div>
+                <span className="text-xs font-semibold"
+                      style={{color: activeSlide === i ? '#fff' : 'rgba(255,255,255,.35)'}}>
+                  {slideLabel[s.type] || s.badge}
+                </span>
+              </div>
+            </button>
+          ))}
+
+          {/* stats */}
+          <div className="mt-auto pt-3 border-t border-white/5">
+            <div className="text-xs uppercase tracking-widest text-white/18 font-bold mb-2 px-1">Dados</div>
+            {[
+              { label:'Total vendas', val:'3.636' },
+              { label:'Pico (10h)',   val:'349'   },
+              { label:'Cartão',      val:'97,5%'  },
+              { label:'Melhor dia',  val:'Terça'  },
+            ].map((s,i) => (
+              <div key={i} className="flex justify-between px-1 py-1.5">
+                <span className="text-xs text-white/25">{s.label}</span>
+                <span className="text-xs font-bold text-white/50">{s.val}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* keyboard hint */}
+          <div className="pt-3 border-t border-white/5 px-1">
+            <div className="text-xs text-white/18 leading-relaxed">
+              <div className="font-bold text-white/25 mb-1">Atalhos</div>
+              <div>← → · navegar slides</div>
+              <div>1 2 3 · trocar campanha</div>
+              <div>F · tela cheia</div>
+              <div>Esc · sair / fechar</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* coffee modal */}
+      {coffeeOpen && <CoffeeModal coffeeKey={coffeeOpen} onClose={() => setCoffeeOpen(null)} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
