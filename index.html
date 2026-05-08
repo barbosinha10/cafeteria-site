@@ -155,6 +155,7 @@ const coffeeDB = {
 
 /* ── campaigns ──────────────────────────────────────────────────── */
 const campaigns = [
+  /* ─────────────────── CAMPANHA 1 ─────────────────── */
   {
     id: 1, emoji: '🌅', title: 'Ritual das 7h', subtitle: 'Antes de Todos',
     accent: '#c8813a', bg: '#0c0905',
@@ -162,174 +163,143 @@ const campaigns = [
       {
         type: 'cover', badge: 'Campanha 1 · Ritual das 7h',
         headline: ['Antes de', 'Tudo. Antes', 'de Todos. 🌅'],
-        sub: 'Às 7h da manhã, a cidade ainda dorme — e o melhor café já está te esperando.',
+        sub: 'E se a cafeteria fosse inteiramente sua — antes do mundo acordar?',
         visual: () => (
           <div className="flex flex-col items-center gap-5">
             <div className="relative float">
-              <span className="text-8xl drop-shadow-lg select-none">☕</span>
-              <div className="absolute flex gap-2" style={{top:'-18px', left:'50%', transform:'translateX(-50%)'}}>
+              <span className="text-8xl">☕</span>
+              <div className="absolute flex gap-2" style={{top:'-18px',left:'50%',transform:'translateX(-50%)'}}>
                 {['-7px','0px','7px'].map((x,i) => (
-                  <div key={i} className="steam-w" style={{
-                    width:'3px', height:'22px',
-                    background:'linear-gradient(to top, rgba(200,129,58,.9), transparent)',
-                    borderRadius:'3px',
-                    transform:`translateX(${x}) rotate(${(i-1)*14}deg)`
-                  }}/>
+                  <div key={i} className="steam-w" style={{width:'3px',height:'22px',
+                    background:'linear-gradient(to top,rgba(200,129,58,.9),transparent)',
+                    borderRadius:'3px',transform:`translateX(${x}) rotate(${(i-1)*14}deg)`}}/>
                 ))}
               </div>
             </div>
-            <div className="glow-ring icard flex items-center gap-4 rounded-2xl px-6 py-4"
-                 style={{background:'rgba(200,129,58,.09)', border:'1px solid rgba(200,129,58,.38)'}}>
-              <span className="text-3xl">🕖</span>
-              <div>
-                <div className="text-3xl font-black leading-none" style={{color:'#c8813a'}}>07:00</div>
-                <div className="text-xs uppercase tracking-widest mt-1" style={{color:'rgba(255,255,255,.45)'}}>O Horário dos Eleitos</div>
-              </div>
+            <div className="flex flex-col items-center gap-2 text-center">
+              <div className="text-[10px] uppercase tracking-[4px]" style={{color:'rgba(200,129,58,.5)'}}>O horário mais exclusivo do dia</div>
+              <div className="text-5xl font-black" style={{color:'#c8813a'}}>07:00</div>
+              <div className="text-xs" style={{color:'rgba(255,255,255,.28)'}}>quando a cidade ainda dorme</div>
             </div>
-            <div className="text-xs tracking-wider" style={{color:'rgba(255,255,255,.2)'}}>apenas 91 pessoas chegam antes do mundo</div>
           </div>
         ),
       },
       {
-        type: 'concept', badge: 'O Contraste',
-        headline: ['Enquanto a', 'Cidade Ainda', 'Dorme. 🌙'],
-        sub: 'Às 7h a cafeteria é toda sua. Sem fila, sem pressa. Só o aroma e a manhã que nasce.',
+        type: 'problem', badge: 'O Problema',
+        headline: ['Todo Mundo', 'Briga Pelo', 'Mesmo Café.'],
+        sub: 'O cliente que chega às 10h compete com dezenas. O que chega às 7h não compete com ninguém.',
         visual: () => (
-          <div className="flex flex-col gap-2.5 w-full max-w-sm">
-            {[
-              { icon:'🌙', label:'6h30 · O mundo dorme',  desc:'Silêncio. Calma. Café fresco saindo.',   hi:false, dim:true  },
-              { icon:'🌅', label:'7h · Seu momento',      desc:'Melhor mesa. Café mais quente. Fila zero.', hi:true,  dim:false },
-              { icon:'☀️', label:'9h · O rush começa',    desc:'Pressa, ruído, fila crescendo...',         hi:false, dim:true  },
-              { icon:'🔥', label:'10h · Pico máximo',     desc:'349 pessoas no mesmo horário.',            hi:false, dim:true  },
-            ].map((it, x) => (
-              <div key={x} className="icard rounded-xl px-4 py-3 flex items-center gap-3"
-                   style={{
-                     background: it.hi ? 'rgba(200,129,58,.1)' : 'rgba(255,255,255,.025)',
-                     border: it.hi ? '1px solid rgba(200,129,58,.45)' : '1px solid rgba(255,255,255,.06)',
-                     opacity: it.dim ? 0.55 : 1,
-                     transform: it.hi ? 'scale(1.02)' : 'none',
-                   }}>
-                <span className="text-xl">{it.icon}</span>
-                <div className="flex-1">
-                  <div className="text-xs font-bold" style={{color: it.hi ? '#c8813a' : 'rgba(255,255,255,.65)'}}>{it.label}</div>
-                  <div className="text-[10px] mt-0.5" style={{color: it.hi ? 'rgba(200,129,58,.6)' : 'rgba(255,255,255,.28)'}}>{it.desc}</div>
-                </div>
-                {it.hi && <div className="text-[9px] font-black uppercase tracking-wider" style={{color:'#c8813a'}}>✦ Você</div>}
-              </div>
-            ))}
-          </div>
-        ),
-      },
-      {
-        type: 'data', badge: 'O Segredo',
-        headline: ['Apenas 91', 'Pessoas Por', 'Mês Sabem.'],
-        sub: 'Das 3.636 transações, só 91 são às 7h. Exclusividade real — não inventada.',
-        visual: () => (
-          <div className="w-full max-w-xs">
-            <div className="text-xs uppercase tracking-widest mb-3" style={{color:'rgba(255,255,255,.3)'}}>Movimento por horário</div>
-            {[
-              { h:'7h',  v:91,  pct:26,  hi:true  },
-              { h:'8h',  v:235, pct:67             },
-              { h:'9h',  v:247, pct:71             },
-              { h:'10h', v:349, pct:100            },
-              { h:'11h', v:294, pct:84             },
-            ].map((r, i) => (
-              <div key={i} className="flex items-center gap-3 mb-2.5">
-                <div className="text-xs w-7" style={{color:'rgba(255,255,255,.4)'}}>{r.h}</div>
-                <div className="flex-1 h-7 rounded-lg overflow-hidden" style={{background:'rgba(255,255,255,.04)'}}>
-                  <div className="bar-fill h-full rounded-lg flex items-center pl-2 text-xs font-bold"
-                       style={{ animationDelay:`${i*80}ms`, width:`${r.pct}%`,
-                         background: r.hi ? 'linear-gradient(90deg,#c8813a,#e8c070)' : 'rgba(255,255,255,.08)',
-                         color: r.hi ? '#fff' : 'rgba(255,255,255,.35)' }}>
-                    {r.hi ? `✦ ${r.v}` : r.v}
+          <div className="flex flex-col gap-3 w-full max-w-sm">
+            <div className="rounded-xl p-4" style={{background:'rgba(255,255,255,.04)', border:'1px solid rgba(255,255,255,.08)'}}>
+              <div className="text-[10px] uppercase tracking-widest mb-2" style={{color:'rgba(255,255,255,.3)'}}>Hoje, no horário de pico</div>
+              <div className="flex flex-col gap-1.5">
+                {['Fila, pressa e atendimento dividido','Cliente sem experiência real','Saiu. Não voltou. Não recomendou.'].map((t,i) => (
+                  <div key={i} className="flex items-center gap-2 text-xs" style={{color:'rgba(255,255,255,.5)'}}>
+                    <span style={{color:'rgba(255,80,80,.65)'}}>✕</span> {t}
                   </div>
-                </div>
-                {r.hi && <span className="text-[9px] font-black uppercase tracking-wider" style={{color:'#c8813a', whiteSpace:'nowrap'}}>EXCLUSIVO</span>}
+                ))}
               </div>
-            ))}
-            <div className="mt-4 rounded-xl p-3 text-center" style={{background:'rgba(200,129,58,.06)', border:'1px solid rgba(200,129,58,.22)'}}>
-              <div className="text-[10px] uppercase tracking-widest" style={{color:'rgba(255,255,255,.28)'}}>Às 10h você disputa com</div>
-              <div className="text-xl font-black" style={{color:'rgba(255,255,255,.45)'}}>349 pessoas</div>
-              <div className="text-[10px] mt-0.5" style={{color:'#c8813a'}}>Às 7h a casa é só sua</div>
+            </div>
+            <div className="rounded-xl p-4" style={{background:'rgba(200,129,58,.08)', border:'1px solid rgba(200,129,58,.35)'}}>
+              <div className="text-[10px] uppercase tracking-widest mb-2" style={{color:'rgba(200,129,58,.7)'}}>Com o Ritual das 7h</div>
+              <div className="flex flex-col gap-1.5">
+                {['Casa tranquila, atenção total ao cliente','Experiência memorável garantida','Cliente sai fidelizado e indica amigos'].map((t,i) => (
+                  <div key={i} className="flex items-center gap-2 text-xs" style={{color:'rgba(255,255,255,.72)'}}>
+                    <span style={{color:'#c8813a'}}>✦</span> {t}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         ),
       },
       {
-        type: 'offer', badge: 'A Recompensa',
-        headline: ['Madrugadores', 'Ganham', 'Mais. ☕'],
-        sub: 'Quem chega cedo merece um café especial — e um desconto à altura do ritual.',
+        type: 'concept', badge: 'A Proposta',
+        headline: ['Um Clube', 'Para Quem', 'Chega Primeiro.'],
+        sub: 'Transformamos as 7h em um ritual de exclusividade — um momento que o cliente vai querer repetir toda manhã.',
+        visual: () => (
+          <div className="flex flex-col gap-3 w-full max-w-sm">
+            {[
+              {icon:'🌅', title:'Exclusividade Real', desc:'A casa quase vazia é um privilégio. Vamos comunicar exatamente assim.'},
+              {icon:'🔁', title:'Hábito Que Fideliza', desc:'Quem vem às 7h uma vez, volta. O ritual cria dependência positiva.'},
+              {icon:'📣', title:'Marketing Orgânico', desc:'Quem descobre o segredo das 7h conta para os amigos. Sempre.'},
+            ].map((p,i) => (
+              <div key={i} className="flex items-start gap-3 rounded-xl px-4 py-3"
+                   style={{background:'rgba(200,129,58,.07)', border:'1px solid rgba(200,129,58,.22)'}}>
+                <span className="text-xl mt-0.5">{p.icon}</span>
+                <div>
+                  <div className="text-xs font-black text-white">{p.title}</div>
+                  <div className="text-[10px] mt-0.5" style={{color:'rgba(255,255,255,.38)'}}>{p.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ),
+      },
+      {
+        type: 'offer', badge: 'A Mecânica',
+        headline: ['20% OFF', 'Para Quem', 'Madruga. ☕'],
+        sub: 'Simples, direto e irresistível. Uma recompensa concreta para quem adota o ritual.',
         visual: () => (
           <div className="glow-ring icard rounded-2xl p-6 text-center w-full max-w-xs"
                style={{background:'rgba(200,129,58,.06)', border:'2px solid rgba(200,129,58,.45)'}}>
             <div className="text-5xl mb-3">🌅</div>
-            <div className="text-xs uppercase tracking-widest mb-2 font-bold" style={{color:'#c8813a'}}>Promoção Madrugador</div>
+            <div className="text-[10px] uppercase tracking-[3px] mb-2 font-bold" style={{color:'#c8813a'}}>Todo dia · 6h30 às 7h30</div>
             <div className="text-5xl font-black text-white mb-1">20% <span style={{color:'#c8813a'}}>OFF</span></div>
-            <div className="text-sm mb-4" style={{color:'rgba(255,255,255,.4)'}}>Qualquer café entre 6h30 – 7h30</div>
+            <div className="text-sm mb-4" style={{color:'rgba(255,255,255,.38)'}}>em qualquer café do cardápio</div>
             <div className="border-t pt-4" style={{borderColor:'rgba(255,255,255,.08)'}}>
-              <div className="font-mono text-lg font-bold tracking-widest rounded-lg py-2" style={{color:'#c8813a', background:'rgba(0,0,0,.3)'}}>SETE7</div>
+              <div className="font-mono text-lg font-bold tracking-widest rounded-lg py-2"
+                   style={{color:'#c8813a', background:'rgba(0,0,0,.35)'}}>SETE7</div>
               <div className="text-xs mt-2" style={{color:'rgba(255,255,255,.2)'}}>Mostre este código no caixa · todos os dias</div>
             </div>
           </div>
         ),
       },
       {
-        type: 'cta', badge: 'O Convite',
-        headline: ['Amanhã. 7h.', 'A Cidade É', 'Sua. ✨'],
-        sub: 'Desperte o ritual. Café pronto, mesa livre, dia começando só para você.',
+        type: 'cta', badge: 'O Impacto',
+        headline: ['Mais Vendas', 'No Horário', 'Mais Vazio. ✨'],
+        sub: 'Transformamos o momento de menor fluxo em uma vantagem competitiva real.',
         visual: () => (
-          <div className="flex flex-col items-center gap-4 w-full max-w-xs">
-            <div className="relative float">
-              <span className="text-7xl select-none">☕</span>
-              {['✦','·','✦'].map((s,i) => (
-                <span key={i} className="absolute text-sm" style={{
-                  color:'rgba(200,129,58,.55)',
-                  top: i===1 ? '-18px' : '-8px',
-                  left: i===0 ? '-14px' : i===1 ? '50%' : 'auto',
-                  right: i===2 ? '-14px' : 'auto',
-                  transform: i===1 ? 'translateX(-50%)' : 'none',
-                }}>{s}</span>
-              ))}
-            </div>
-            <div className="icard w-full rounded-2xl p-5 text-center"
-                 style={{background:'linear-gradient(135deg,#c8813a,#a06028)', boxShadow:'0 8px 40px rgba(200,129,58,.32)'}}>
-              <div className="text-white font-black text-lg">Acorde cedo. Viva mais.</div>
-              <div className="text-sm mt-1" style={{color:'rgba(255,255,255,.78)'}}>Cupom SETE7 · 20% OFF · 6h30–7h30</div>
-            </div>
-            <div className="grid grid-cols-2 gap-3 w-full">
-              {[{icon:'⏰', label:'Setar alarme 7h'},{icon:'🤫', label:'Guardar o segredo'}].map((b,i) => (
-                <div key={i} className="icard rounded-xl p-3 text-center"
-                     style={{background:'rgba(255,255,255,.04)', border:'1px solid rgba(200,129,58,.15)'}}>
-                  <div className="text-xl">{b.icon}</div>
-                  <div className="text-xs mt-1" style={{color:'rgba(255,255,255,.4)'}}>{b.label}</div>
+          <div className="flex flex-col gap-3 w-full max-w-sm">
+            {[
+              {n:'01', title:'Fluxo crescente nas 7h', desc:'Clientes que antes não vinham passam a fazer parte da rotina matinal.'},
+              {n:'02', title:'Fidelização antecipada', desc:'O cliente conquistado de manhã é o mais leal e constante do dia.'},
+              {n:'03', title:'Identidade de marca', desc:'A cafeteria vira referência para o ritual matinal da cidade.'},
+            ].map((r,i) => (
+              <div key={i} className="flex items-start gap-3">
+                <div className="font-black text-base" style={{color:'rgba(200,129,58,.32)', lineHeight:1.3, minWidth:'22px'}}>{r.n}</div>
+                <div className="rounded-xl px-4 py-3 flex-1" style={{background:'rgba(200,129,58,.07)', border:'1px solid rgba(200,129,58,.18)'}}>
+                  <div className="text-xs font-black text-white">{r.title}</div>
+                  <div className="text-[10px] mt-0.5" style={{color:'rgba(255,255,255,.38)'}}>{r.desc}</div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         ),
       },
     ],
   },
 
+  /* ─────────────────── CAMPANHA 2 ─────────────────── */
   {
     id: 2, emoji: '✦', title: 'Menu da Semana', subtitle: 'Curadoria Diária',
     accent: '#d4a853', bg: '#070e1a',
     slides: [
       {
-        type: 'cover', badge: 'Campanha 2 · Curadoria Semanal',
-        headline: ['Um Café', 'Diferente Cada', 'Dia. ✦'],
-        sub: 'Selecionamos o melhor café de cada dia — com desconto especial para você.',
+        type: 'cover', badge: 'Campanha 2 · Menu da Semana',
+        headline: ['E Se Cada', 'Dia Tivesse', 'Um Motivo? ✦'],
+        sub: 'E se o cliente tivesse uma razão nova para voltar toda vez que a semana virar?',
         visual: (openCoffee) => (
           <div className="flex flex-col items-center gap-4 w-full max-w-xs">
             <div className="w-full rounded-2xl overflow-hidden"
                  style={{background:'rgba(212,168,83,.05)', border:'1px solid rgba(212,168,83,.25)'}}>
               <div className="text-center py-3 border-b" style={{borderColor:'rgba(212,168,83,.15)'}}>
-                <div className="text-[10px] uppercase tracking-[4px]" style={{color:'rgba(212,168,83,.55)'}}>✦ Menu Semanal ✦</div>
+                <div className="text-[10px] uppercase tracking-[4px]" style={{color:'rgba(212,168,83,.55)'}}>✦ Menu da Semana ✦</div>
               </div>
               {[
                 {key:'expresso',     emoji:'☕', name:'Espresso',      days:'Seg · Ter', promo:'20% OFF'},
                 {key:'cocoa',        emoji:'🍫', name:'Cocoa',         days:'Qua · Qui', promo:'Leve 2 Pague 1'},
-                {key:'hotchocolate', emoji:'🍵', name:'Hot Chocolate', days:'Sexta',     promo:'25% OFF Grande'},
+                {key:'hotchocolate', emoji:'🍵', name:'Hot Chocolate', days:'Sexta',     promo:'25% OFF'},
                 {key:'cortado',      emoji:'🥛', name:'Cortado',       days:'Sáb · Dom', promo:'+ Brinde'},
               ].map((c, i, arr) => (
                 <button key={c.key} onClick={() => openCoffee(c.key)}
@@ -354,205 +324,129 @@ const campaigns = [
         ),
       },
       {
-        type: 'seg-ter', badge: 'Segunda & Terça',
-        headline: ['Espresso:', 'A Base de', 'Tudo. ☕'],
-        sub: 'Tradição italiana em 30ml. Força, crema dourada e energia para dominar a semana.',
-        visual: (openCoffee) => (
-          <div className="flex flex-col items-center gap-4 w-full max-w-xs">
-            <div className="w-full rounded-2xl p-5"
-                 style={{background:'rgba(212,168,83,.05)', border:'1px solid rgba(212,168,83,.22)'}}>
-              <div className="flex items-center gap-3 mb-4">
-                <button onClick={() => openCoffee('expresso')} className="float text-5xl hover:scale-110 transition-transform">☕</button>
-                <div>
-                  <div className="text-[10px] uppercase tracking-[3px]" style={{color:'rgba(212,168,83,.6)'}}>Seg · Ter</div>
-                  <div className="text-lg font-black text-white">Espresso</div>
-                  <div className="text-xs italic" style={{color:'rgba(255,255,255,.32)'}}>Itália · Tradição desde 1901</div>
-                </div>
-              </div>
-              <div className="border-t pt-3 mb-4" style={{borderColor:'rgba(255,255,255,.07)'}}>
-                <div className="flex gap-2 flex-wrap">
-                  {['Chocolate amargo','Caramelo','Nozes'].map((n,i) => (
-                    <span key={i} className="text-[10px] px-2 py-1 rounded-full"
-                      style={{background:'rgba(212,168,83,.1)', border:'1px solid rgba(212,168,83,.25)', color:'rgba(212,168,83,.85)'}}>
-                      {n}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-3xl font-black text-white">20% <span style={{color:'#d4a853'}}>OFF</span></div>
-                  <div className="text-[10px]" style={{color:'rgba(255,255,255,.32)'}}>toda segunda e terça</div>
-                </div>
-                <button onClick={() => openCoffee('expresso')}
-                  className="ibtn text-[10px] font-bold px-3 py-1.5 rounded-full"
-                  style={{border:'1px solid rgba(212,168,83,.4)', color:'#d4a853'}}>
-                  ✦ Detalhes
-                </button>
+        type: 'problem', badge: 'O Problema',
+        headline: ['Clientes Vêm', 'Uma Vez.', 'E Somem.'],
+        sub: 'A maior perda de uma cafeteria não é vender pouco — é ter clientes que não voltam.',
+        visual: () => (
+          <div className="flex flex-col gap-3 w-full max-w-sm">
+            <div className="rounded-xl p-4" style={{background:'rgba(255,255,255,.04)', border:'1px solid rgba(255,255,255,.08)'}}>
+              <div className="text-[10px] uppercase tracking-widest mb-2" style={{color:'rgba(255,255,255,.28)'}}>Sem campanha de frequência</div>
+              <div className="flex flex-col gap-1.5">
+                {['Cliente vem uma vez, não cria hábito','Nenhum motivo para voltar amanhã','Receita imprevisível, sem vínculo real'].map((t,i) => (
+                  <div key={i} className="flex items-center gap-2 text-xs" style={{color:'rgba(255,255,255,.5)'}}>
+                    <span style={{color:'rgba(255,80,80,.65)'}}>✕</span> {t}
+                  </div>
+                ))}
               </div>
             </div>
-            <div className="font-mono text-sm font-bold tracking-widest rounded-lg py-2 w-full text-center"
-                 style={{background:'rgba(0,0,0,.35)', border:'1px solid rgba(212,168,83,.22)', color:'#d4a853'}}>
-              EXPRESSO20
+            <div className="rounded-xl p-4" style={{background:'rgba(212,168,83,.08)', border:'1px solid rgba(212,168,83,.35)'}}>
+              <div className="text-[10px] uppercase tracking-widest mb-2" style={{color:'rgba(212,168,83,.7)'}}>Com o Menu da Semana</div>
+              <div className="flex flex-col gap-1.5">
+                {['Um motivo novo para voltar toda semana','Hábito de visita se forma naturalmente','Receita previsível e cliente engajado'].map((t,i) => (
+                  <div key={i} className="flex items-center gap-2 text-xs" style={{color:'rgba(255,255,255,.72)'}}>
+                    <span style={{color:'#d4a853'}}>✦</span> {t}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         ),
       },
       {
-        type: 'qua-qui', badge: 'Quarta & Quinta',
-        headline: ['Cocoa:', 'Conforto No', 'Meio. 🍫'],
-        sub: 'Cacau premium baiano em leite aveludado. A queda de tarde nunca foi tão boa.',
-        visual: (openCoffee) => (
-          <div className="flex flex-col items-center gap-4 w-full max-w-xs">
-            <div className="w-full rounded-2xl p-5"
-                 style={{background:'rgba(212,168,83,.05)', border:'1px solid rgba(212,168,83,.22)'}}>
-              <div className="flex items-center gap-3 mb-4">
-                <button onClick={() => openCoffee('cocoa')} className="float text-5xl hover:scale-110 transition-transform">🍫</button>
+        type: 'concept', badge: 'A Proposta',
+        headline: ['Um Cardápio', 'Vivo. Uma', 'Razão Por Dia.'],
+        sub: 'Cada dia da semana tem um café curado com promoção exclusiva. O cliente sempre tem um motivo.',
+        visual: () => (
+          <div className="flex flex-col gap-3 w-full max-w-sm">
+            {[
+              {icon:'🗓️', title:'Antecipação Semanal', desc:'O cliente já sabe: na quarta tem Cocoa, na sexta tem Hot Chocolate. Ele planeja a visita.'},
+              {icon:'☕', title:'Curadoria Com Valor', desc:'Cada café tem origem, notas de sabor e um momento perfeito na semana.'},
+              {icon:'🔄', title:'Frequência Que Virou Hábito', desc:'4 promoções distribuídas em 7 dias. O cliente cria o ritual antes de perceber.'},
+            ].map((p,i) => (
+              <div key={i} className="flex items-start gap-3 rounded-xl px-4 py-3"
+                   style={{background:'rgba(212,168,83,.07)', border:'1px solid rgba(212,168,83,.2)'}}>
+                <span className="text-xl mt-0.5">{p.icon}</span>
                 <div>
-                  <div className="text-[10px] uppercase tracking-[3px]" style={{color:'rgba(212,168,83,.6)'}}>Qua · Qui</div>
-                  <div className="text-lg font-black text-white">Cocoa</div>
-                  <div className="text-xs italic" style={{color:'rgba(255,255,255,.32)'}}>Brasil · Cacau Premium Baiano</div>
+                  <div className="text-xs font-black text-white">{p.title}</div>
+                  <div className="text-[10px] mt-0.5" style={{color:'rgba(255,255,255,.38)'}}>{p.desc}</div>
                 </div>
               </div>
-              <div className="border-t pt-3 mb-4" style={{borderColor:'rgba(255,255,255,.07)'}}>
-                <div className="flex gap-2 flex-wrap">
-                  {['Chocolate meio amargo','Mel silvestre','Canela'].map((n,i) => (
-                    <span key={i} className="text-[10px] px-2 py-1 rounded-full"
-                      style={{background:'rgba(212,168,83,.1)', border:'1px solid rgba(212,168,83,.25)', color:'rgba(212,168,83,.85)'}}>
-                      {n}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-3xl font-black text-white">Leve <span style={{color:'#d4a853'}}>2</span></div>
-                  <div className="text-[10px]" style={{color:'rgba(255,255,255,.32)'}}>pague 1 · qua e qui</div>
-                </div>
-                <button onClick={() => openCoffee('cocoa')}
-                  className="ibtn text-[10px] font-bold px-3 py-1.5 rounded-full"
-                  style={{border:'1px solid rgba(212,168,83,.4)', color:'#d4a853'}}>
-                  ✦ Detalhes
-                </button>
-              </div>
-            </div>
-            <div className="font-mono text-sm font-bold tracking-widest rounded-lg py-2 w-full text-center"
-                 style={{background:'rgba(0,0,0,.35)', border:'1px solid rgba(212,168,83,.22)', color:'#d4a853'}}>
-              COCOA2X1
-            </div>
+            ))}
           </div>
         ),
       },
       {
-        type: 'sex', badge: 'Sexta-Feira',
-        headline: ['Hot Chocolate:', 'Você Chegou', 'Lá. 🍵'],
-        sub: 'Chocolate belga 70% com creme fresco. Porque sexta merece a melhor indulgência.',
+        type: 'offer', badge: 'A Mecânica',
+        headline: ['Quatro Cafés.', 'Quatro', 'Momentos. ☕'],
+        sub: 'Cada bebida conectada a um dia específico. A promoção reforça o hábito de vir.',
         visual: (openCoffee) => (
-          <div className="flex flex-col items-center gap-4 w-full max-w-xs">
-            <div className="w-full rounded-2xl p-5"
-                 style={{background:'rgba(212,168,83,.05)', border:'1px solid rgba(212,168,83,.22)'}}>
-              <div className="flex items-center gap-3 mb-4">
-                <button onClick={() => openCoffee('hotchocolate')} className="float text-5xl hover:scale-110 transition-transform">🍵</button>
-                <div>
-                  <div className="text-[10px] uppercase tracking-[3px]" style={{color:'rgba(212,168,83,.6)'}}>Sexta-Feira</div>
-                  <div className="text-lg font-black text-white">Hot Chocolate</div>
-                  <div className="text-xs italic" style={{color:'rgba(255,255,255,.32)'}}>Bélgica · Chocolate 70% Cacau</div>
+          <div className="flex flex-col gap-2 w-full max-w-sm">
+            {[
+              {key:'expresso',     emoji:'☕', name:'Espresso',      days:'Seg · Ter', promo:'20% OFF'},
+              {key:'cocoa',        emoji:'🍫', name:'Cocoa',         days:'Qua · Qui', promo:'Leve 2 Pague 1'},
+              {key:'hotchocolate', emoji:'🍵', name:'Hot Chocolate', days:'Sexta',     promo:'25% OFF Grande'},
+              {key:'cortado',      emoji:'🥛', name:'Cortado',       days:'Sáb · Dom', promo:'+ Brinde Surpresa'},
+            ].map((c, i) => (
+              <button key={c.key} onClick={() => openCoffee(c.key)}
+                className="icard w-full flex items-center justify-between rounded-xl px-4 py-3 group"
+                style={{background:'rgba(212,168,83,.05)', border:'1px solid rgba(212,168,83,.2)', textAlign:'left'}}>
+                <div className="flex items-center gap-3">
+                  <span className="text-lg group-hover:scale-110 transition-transform">{c.emoji}</span>
+                  <div>
+                    <div className="text-xs font-bold" style={{color:'rgba(255,255,255,.82)'}}>{c.name}</div>
+                    <div className="text-[10px]" style={{color:'rgba(212,168,83,.55)'}}>{c.days}</div>
+                  </div>
                 </div>
-              </div>
-              <div className="border-t pt-3 mb-4" style={{borderColor:'rgba(255,255,255,.07)'}}>
-                <div className="flex gap-2 flex-wrap">
-                  {['Chocolate ao leite','Baunilha','Creme suave'].map((n,i) => (
-                    <span key={i} className="text-[10px] px-2 py-1 rounded-full"
-                      style={{background:'rgba(212,168,83,.1)', border:'1px solid rgba(212,168,83,.25)', color:'rgba(212,168,83,.85)'}}>
-                      {n}
-                    </span>
-                  ))}
+                <div className="text-[10px] font-bold px-2 py-1 rounded-full"
+                     style={{background:'rgba(212,168,83,.12)', color:'#d4a853', border:'1px solid rgba(212,168,83,.28)'}}>
+                  {c.promo}
                 </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-3xl font-black text-white">25% <span style={{color:'#d4a853'}}>OFF</span></div>
-                  <div className="text-[10px]" style={{color:'rgba(255,255,255,.32)'}}>tamanho grande · só sexta</div>
-                </div>
-                <button onClick={() => openCoffee('hotchocolate')}
-                  className="ibtn text-[10px] font-bold px-3 py-1.5 rounded-full"
-                  style={{border:'1px solid rgba(212,168,83,.4)', color:'#d4a853'}}>
-                  ✦ Detalhes
-                </button>
-              </div>
-            </div>
-            <div className="font-mono text-sm font-bold tracking-widest rounded-lg py-2 w-full text-center"
-                 style={{background:'rgba(0,0,0,.35)', border:'1px solid rgba(212,168,83,.22)', color:'#d4a853'}}>
-              HOTCHOC25
-            </div>
+              </button>
+            ))}
           </div>
         ),
       },
       {
-        type: 'fds', badge: 'Sábado & Domingo',
-        headline: ['Cortado:', 'Equilíbrio', 'Perfeito. 🥛'],
-        sub: 'Espresso cortado por leite vaporizado. O café dos verdadeiros apreciadores.',
-        visual: (openCoffee) => (
-          <div className="flex flex-col items-center gap-4 w-full max-w-xs">
-            <div className="w-full rounded-2xl p-5"
-                 style={{background:'rgba(212,168,83,.05)', border:'1px solid rgba(212,168,83,.22)'}}>
-              <div className="flex items-center gap-3 mb-4">
-                <button onClick={() => openCoffee('cortado')} className="float text-5xl hover:scale-110 transition-transform">🥛</button>
-                <div>
-                  <div className="text-[10px] uppercase tracking-[3px]" style={{color:'rgba(212,168,83,.6)'}}>Sáb · Dom</div>
-                  <div className="text-lg font-black text-white">Cortado</div>
-                  <div className="text-xs italic" style={{color:'rgba(255,255,255,.32)'}}>Espanha · Técnica Tradicional</div>
+        type: 'cta', badge: 'O Impacto',
+        headline: ['Frequência', 'Vira Hábito.', 'Hábito Vira Receita. ✦'],
+        sub: 'Clientes que visitam com frequência gastam mais, recomendam mais e ficam mais tempo.',
+        visual: () => (
+          <div className="flex flex-col gap-3 w-full max-w-sm">
+            {[
+              {n:'01', title:'Mais visitas por semana', desc:'Cada dia tem um motivo diferente. A frequência aumenta naturalmente.'},
+              {n:'02', title:'Ticket médio maior', desc:'Clientes habituados com a marca compram mais e experimentam mais.'},
+              {n:'03', title:'Base de clientes previsível', desc:'Quando o cliente tem ritual, a receita deixa de ser surpresa.'},
+            ].map((r,i) => (
+              <div key={i} className="flex items-start gap-3">
+                <div className="font-black text-base" style={{color:'rgba(212,168,83,.32)', lineHeight:1.3, minWidth:'22px'}}>{r.n}</div>
+                <div className="rounded-xl px-4 py-3 flex-1" style={{background:'rgba(212,168,83,.07)', border:'1px solid rgba(212,168,83,.18)'}}>
+                  <div className="text-xs font-black text-white">{r.title}</div>
+                  <div className="text-[10px] mt-0.5" style={{color:'rgba(255,255,255,.38)'}}>{r.desc}</div>
                 </div>
               </div>
-              <div className="border-t pt-3 mb-4" style={{borderColor:'rgba(255,255,255,.07)'}}>
-                <div className="flex gap-2 flex-wrap">
-                  {['Café intenso','Leite sedoso','Equilíbrio'].map((n,i) => (
-                    <span key={i} className="text-[10px] px-2 py-1 rounded-full"
-                      style={{background:'rgba(212,168,83,.1)', border:'1px solid rgba(212,168,83,.25)', color:'rgba(212,168,83,.85)'}}>
-                      {n}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-2xl font-black text-white">Cortado <span style={{color:'#d4a853'}}>+</span></div>
-                  <div className="text-[10px]" style={{color:'rgba(255,255,255,.32)'}}>brinde surpresa · sáb e dom</div>
-                </div>
-                <button onClick={() => openCoffee('cortado')}
-                  className="ibtn text-[10px] font-bold px-3 py-1.5 rounded-full"
-                  style={{border:'1px solid rgba(212,168,83,.4)', color:'#d4a853'}}>
-                  ✦ Detalhes
-                </button>
-              </div>
-            </div>
-            <div className="font-mono text-sm font-bold tracking-widest rounded-lg py-2 w-full text-center"
-                 style={{background:'rgba(0,0,0,.35)', border:'1px solid rgba(212,168,83,.22)', color:'#d4a853'}}>
-              CORTADO
-            </div>
+            ))}
           </div>
         ),
       },
     ],
   },
 
+  /* ─────────────────── CAMPANHA 3 ─────────────────── */
   {
     id: 3, emoji: '🔥', title: 'Terça É Nosso Dia', subtitle: '585 Vendas',
     accent: '#e84060', bg: '#0a0a0f',
     slides: [
       {
         type: 'cover', badge: 'Campanha 3 · Terça-feira',
-        headline: ['Terça-Feira', 'É Nosso', 'Dia. 🔥'],
-        sub: 'O dia com maior movimento da semana. 585 pessoas não podem estar erradas.',
+        headline: ['A Terça É', 'Nosso Dia', 'Mais Forte. 🔥'],
+        sub: 'É hora de parar de deixar nosso melhor dia acontecer por acaso — e fazer ele trabalhar por nós.',
         visual: () => (
           <div className="flex flex-col items-center gap-3">
-            <div className="text-[10px] font-black uppercase tracking-[5px]" style={{color:'rgba(232,64,96,.65)'}}>RECORDE SEMANAL</div>
-            <div style={{fontSize:'96px', fontWeight:900, lineHeight:1, color:'#fff',
-              textShadow:'0 0 60px rgba(232,64,96,.45)', letterSpacing:'-4px'}}>
-              585
-            </div>
+            <div className="text-[10px] font-black uppercase tracking-[5px]" style={{color:'rgba(232,64,96,.65)'}}>NOSSO MELHOR DIA</div>
+            <div style={{fontSize:'92px', fontWeight:900, lineHeight:1, color:'#fff',
+              textShadow:'0 0 60px rgba(232,64,96,.45)', letterSpacing:'-3px'}}>TER</div>
             <div style={{height:'2px', width:'64px', background:'linear-gradient(90deg,transparent,#e84060,transparent)', borderRadius:'2px'}}/>
-            <div className="text-sm" style={{color:'rgba(255,255,255,.32)', letterSpacing:'2px'}}>vendas numa única terça-feira</div>
+            <div className="text-sm" style={{color:'rgba(255,255,255,.32)', letterSpacing:'2px'}}>o dia com mais movimento da semana</div>
             <div className="flex gap-1.5 mt-1">
               {[...Array(5)].map((_,i) => (
                 <div key={i} className="pulse-dot w-1.5 h-1.5 rounded-full" style={{background:'#e84060', animationDelay:`${i*180}ms`}}/>
@@ -562,26 +456,51 @@ const campaigns = [
         ),
       },
       {
-        type: 'insight', badge: 'O Insight',
-        headline: ['Terça Bate', 'Todo Mundo.', '📊'],
-        sub: 'Analisamos todos os dias da semana. Terça não só vence — ela domina.',
+        type: 'problem', badge: 'O Problema',
+        headline: ['Sem Campanha,', 'É Só', 'Sorte. 🎲'],
+        sub: 'Nosso melhor dia da semana acontece sem estratégia. É hora de transformar sorte em sistema.',
         visual: () => (
-          <div className="w-full max-w-xs">
-            <div className="text-xs uppercase tracking-widest mb-3" style={{color:'rgba(255,255,255,.28)'}}>Vendas por dia da semana</div>
-            {[
-              { d:'Seg', v:420 }, { d:'Ter', v:585, hi:true },
-              { d:'Qua', v:510 }, { d:'Qui', v:498 },
-              { d:'Sex', v:540 }, { d:'Sáb', v:390 }, { d:'Dom', v:293 },
-            ].map((r,i) => (
-              <div key={i} className="flex items-center gap-3 mb-2">
-                <div className="text-xs w-7" style={{color: r.hi ? '#e84060' : 'rgba(255,255,255,.4)', fontWeight: r.hi ? 700 : 400}}>{r.d}</div>
-                <div className="flex-1 h-6 rounded-lg overflow-hidden" style={{background:'rgba(255,255,255,.04)'}}>
-                  <div className="bar-fill h-full rounded-lg flex items-center pl-2 text-xs font-bold"
-                       style={{ animationDelay:`${i*60}ms`, width:`${Math.round((r.v/585)*100)}%`,
-                         background: r.hi ? 'linear-gradient(90deg,#e84060,#ff607a)' : 'rgba(255,255,255,.08)',
-                         color: r.hi ? '#fff' : 'rgba(255,255,255,.38)' }}>
-                    {r.hi ? `🔥 ${r.v}` : r.v}
+          <div className="flex flex-col gap-3 w-full max-w-sm">
+            <div className="rounded-xl p-4" style={{background:'rgba(255,255,255,.04)', border:'1px solid rgba(255,255,255,.08)'}}>
+              <div className="text-[10px] uppercase tracking-widest mb-2" style={{color:'rgba(255,255,255,.28)'}}>Terça sem campanha</div>
+              <div className="flex flex-col gap-1.5">
+                {['O movimento acontece por acaso','Nenhum diferencial para o cliente','Oportunidade desperdiçada toda semana'].map((t,i) => (
+                  <div key={i} className="flex items-center gap-2 text-xs" style={{color:'rgba(255,255,255,.5)'}}>
+                    <span style={{color:'rgba(255,80,80,.65)'}}>✕</span> {t}
                   </div>
+                ))}
+              </div>
+            </div>
+            <div className="rounded-xl p-4" style={{background:'rgba(232,64,96,.08)', border:'1px solid rgba(232,64,96,.35)'}}>
+              <div className="text-[10px] uppercase tracking-widest mb-2" style={{color:'rgba(232,64,96,.7)'}}>Terça É Nosso Dia</div>
+              <div className="flex flex-col gap-1.5">
+                {['Movimento planejado e amplificado','Diferencial claro que gera FOMO real','Tradição que o cliente antecipa toda semana'].map((t,i) => (
+                  <div key={i} className="flex items-center gap-2 text-xs" style={{color:'rgba(255,255,255,.72)'}}>
+                    <span style={{color:'#e84060'}}>✦</span> {t}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ),
+      },
+      {
+        type: 'concept', badge: 'A Proposta',
+        headline: ['Toda Terça,', 'Um Evento.', 'Toda Semana. 🔥'],
+        sub: 'Transformamos a terça em uma tradição — algo que o cliente antecipa, conta para os amigos e não quer perder.',
+        visual: () => (
+          <div className="flex flex-col gap-3 w-full max-w-sm">
+            {[
+              {icon:'🔥', title:'FOMO Real', desc:'Quem não foi na terça perdeu. Essa sensação traz de volta semana que vem.'},
+              {icon:'👥', title:'Efeito Comunidade', desc:'A terça vira ponto de encontro. Clientes trazem amigos para não perder.'},
+              {icon:'🏷️', title:'Identidade de Marca', desc:'"Vai lá na terça" — a marca ganha voz própria na cidade.'},
+            ].map((p,i) => (
+              <div key={i} className="flex items-start gap-3 rounded-xl px-4 py-3"
+                   style={{background:'rgba(232,64,96,.07)', border:'1px solid rgba(232,64,96,.2)'}}>
+                <span className="text-xl mt-0.5">{p.icon}</span>
+                <div>
+                  <div className="text-xs font-black text-white">{p.title}</div>
+                  <div className="text-[10px] mt-0.5" style={{color:'rgba(255,255,255,.38)'}}>{p.desc}</div>
                 </div>
               </div>
             ))}
@@ -589,54 +508,24 @@ const campaigns = [
         ),
       },
       {
-        type: 'community', badge: 'A Comunidade',
-        headline: ['Todo Mundo', 'Vem na Terça.', '👥'],
-        sub: 'Nossos clientes mais fiéis tornaram a terça um ritual coletivo semanal.',
-        visual: () => (
-          <div className="flex flex-col items-center gap-4 w-full max-w-xs">
-            <div className="grid grid-cols-5 gap-1.5">
-              {Array.from({length:25}).map((_,i) => (
-                <div key={i} className="icard w-9 h-9 rounded-full flex items-center justify-center text-base"
-                     style={{
-                       background: i < 20 ? 'rgba(232,64,96,.14)' : 'rgba(255,255,255,.03)',
-                       border: i < 20 ? '1px solid rgba(232,64,96,.38)' : '1px solid rgba(255,255,255,.06)',
-                     }}>
-                  {['👩','👨','🧔','👧','🧑'][i%5]}
-                </div>
-              ))}
-            </div>
-            <div className="flex items-center gap-4 w-full">
-              <div className="flex-1 h-px" style={{background:'rgba(232,64,96,.2)'}}/>
-              <div className="text-center">
-                <div className="text-2xl font-black" style={{color:'#e84060'}}>585</div>
-                <div className="text-[10px]" style={{color:'rgba(255,255,255,.3)'}}>na última terça</div>
-              </div>
-              <div className="flex-1 h-px" style={{background:'rgba(232,64,96,.2)'}}/>
-            </div>
-          </div>
-        ),
-      },
-      {
-        type: 'promo', badge: 'A Promoção',
+        type: 'offer', badge: 'A Mecânica',
         headline: ['Você Escolhe.', 'Brinde Ou', 'Desconto. 🎁'],
-        sub: 'Toda terça você decide: brinde exclusivo da semana ou 20% em qualquer combo.',
+        sub: 'Dar escolha ao cliente é poderoso. Ele sente controle — e valoriza ainda mais a promoção.',
         visual: () => (
           <div className="flex flex-col gap-3 w-full max-w-sm">
             {[
-              {icon:'🎁', tag:'OPÇÃO A', title:'Brinde Surpresa', desc:'Novo todo semana. Pode ser qualquer coisa.', hi:true},
-              {icon:'💸', tag:'OPÇÃO B', title:'20% OFF Combos',  desc:'Em qualquer combo do cardápio.', hi:false},
+              {icon:'🎁', tag:'OPÇÃO A', title:'Brinde Surpresa', desc:'Novo toda semana. Gera curiosidade e antecipação. O cliente quer descobrir.', hi:true},
+              {icon:'💸', tag:'OPÇÃO B', title:'20% OFF Combos',  desc:'Desconto direto no bolso. Para quem prefere economia na hora.', hi:false},
             ].map((op,i) => (
               <div key={i} className="icard flex items-center gap-4 rounded-2xl p-4"
-                   style={{
-                     background: op.hi ? 'rgba(232,64,96,.1)' : 'rgba(255,255,255,.04)',
-                     border: `2px solid ${op.hi ? 'rgba(232,64,96,.45)' : 'rgba(255,255,255,.1)'}`,
-                     boxShadow: op.hi ? '0 0 30px rgba(232,64,96,.1)' : 'none',
-                   }}>
+                   style={{background: op.hi ? 'rgba(232,64,96,.1)' : 'rgba(255,255,255,.04)',
+                     border:`2px solid ${op.hi ? 'rgba(232,64,96,.45)' : 'rgba(255,255,255,.1)'}`,
+                     boxShadow: op.hi ? '0 0 30px rgba(232,64,96,.1)' : 'none'}}>
                 <div className="text-4xl">{op.icon}</div>
                 <div>
                   <div className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{color:'#e84060'}}>{op.tag}</div>
                   <div className="text-sm font-black text-white">{op.title}</div>
-                  <div className="text-[10px] mt-0.5" style={{color:'rgba(255,255,255,.32)'}}>{op.desc}</div>
+                  <div className="text-[10px] mt-0.5" style={{color:'rgba(255,255,255,.38)'}}>{op.desc}</div>
                 </div>
               </div>
             ))}
@@ -644,29 +533,24 @@ const campaigns = [
         ),
       },
       {
-        type: 'cta', badge: 'O Chamado',
-        headline: ['Próxima Terça', 'Tem Seu', 'Nome. 📅'],
-        sub: 'Café, desconto e comunidade. Toda terça, sem falta.',
+        type: 'cta', badge: 'O Impacto',
+        headline: ['Sorte Virou', 'Sistema.', 'Sistema Vira Receita. 📅'],
+        sub: 'Quando a terça tem estratégia, ela deixa de ser o melhor dia por acidente — e passa a ser o melhor dia por design.',
         visual: () => (
-          <div className="flex flex-col items-center gap-4 w-full max-w-xs">
-            <div className="relative float">
-              <span className="text-7xl">🔥</span>
-              <div className="absolute inset-0 rounded-full blur-2xl" style={{background:'rgba(232,64,96,.18)'}}/>
-            </div>
-            <div className="icard w-full rounded-2xl p-5 text-center"
-                 style={{background:'linear-gradient(135deg,#e84060,#b02040)', boxShadow:'0 8px 40px rgba(232,64,96,.3)'}}>
-              <div className="text-white font-black text-lg">Reserve seu café!</div>
-              <div className="text-sm mt-1" style={{color:'rgba(255,255,255,.78)'}}>Toda terça tem surpresa esperando</div>
-            </div>
-            <div className="grid grid-cols-2 gap-3 w-full">
-              {[{icon:'📲',label:'WhatsApp'},{icon:'📍',label:'Nos encontre'}].map((b,i)=>(
-                <div key={i} className="icard rounded-xl p-3 text-center"
-                     style={{background:'rgba(255,255,255,.04)', border:'1px solid rgba(232,64,96,.15)'}}>
-                  <div className="text-lg">{b.icon}</div>
-                  <div className="text-xs mt-1" style={{color:'rgba(255,255,255,.4)'}}>{b.label}</div>
+          <div className="flex flex-col gap-3 w-full max-w-sm">
+            {[
+              {n:'01', title:'FOMO amplifica o movimento', desc:'Quem não foi na semana passada garante presença na próxima.'},
+              {n:'02', title:'Novos clientes por indicação', desc:'O cliente satisfeito na terça traz amigo. Toda semana, um ciclo novo.'},
+              {n:'03', title:'Terça vira identidade da marca', desc:'A cafeteria que tem "aquela promoção de terça" fica na memória.'},
+            ].map((r,i) => (
+              <div key={i} className="flex items-start gap-3">
+                <div className="font-black text-base" style={{color:'rgba(232,64,96,.32)', lineHeight:1.3, minWidth:'22px'}}>{r.n}</div>
+                <div className="rounded-xl px-4 py-3 flex-1" style={{background:'rgba(232,64,96,.07)', border:'1px solid rgba(232,64,96,.18)'}}>
+                  <div className="text-xs font-black text-white">{r.title}</div>
+                  <div className="text-[10px] mt-0.5" style={{color:'rgba(255,255,255,.38)'}}>{r.desc}</div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         ),
       },
