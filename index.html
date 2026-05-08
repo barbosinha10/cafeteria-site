@@ -312,114 +312,224 @@ const campaigns = [
   },
 
   {
-    id: 2, emoji: '🗓️', title: 'Especial da Semana', subtitle: 'Um Café por Dia',
-    accent: '#8b5cf6', bg: '#060212',
+    id: 2, emoji: '✦', title: 'Menu da Semana', subtitle: 'Curadoria Diária',
+    accent: '#d4a853', bg: '#070e1a',
     slides: [
       {
-        type: 'cover', badge: 'Campanha 2 · Promoção Semanal',
-        headline: ['Todo Dia', 'Um Café', 'Especial. ✨'],
-        sub: 'Clique em cada café para descobrir a história e a promoção do dia.',
+        type: 'cover', badge: 'Campanha 2 · Curadoria Semanal',
+        headline: ['Um Café', 'Diferente Cada', 'Dia. ✦'],
+        sub: 'Selecionamos o melhor café de cada dia — com desconto especial para você.',
         visual: (openCoffee) => (
           <div className="flex flex-col items-center gap-4 w-full max-w-xs">
-            <div className="grid grid-cols-2 gap-3 w-full">
+            <div className="w-full rounded-2xl overflow-hidden"
+                 style={{background:'rgba(212,168,83,.05)', border:'1px solid rgba(212,168,83,.25)'}}>
+              <div className="text-center py-3 border-b" style={{borderColor:'rgba(212,168,83,.15)'}}>
+                <div className="text-[10px] uppercase tracking-[4px]" style={{color:'rgba(212,168,83,.55)'}}>✦ Menu Semanal ✦</div>
+              </div>
               {[
-                { key:'expresso',      emoji:'☕', name:'Espresso',      days:'Seg · Ter' },
-                { key:'cocoa',         emoji:'🍫', name:'Cocoa',         days:'Qua · Qui' },
-                { key:'hotchocolate',  emoji:'🍵', name:'Hot Chocolate', days:'Sexta'     },
-                { key:'cortado',       emoji:'🥛', name:'Cortado',       days:'Sáb · Dom' },
-              ].map((c) => (
+                {key:'expresso',     emoji:'☕', name:'Espresso',      days:'Seg · Ter', promo:'20% OFF'},
+                {key:'cocoa',        emoji:'🍫', name:'Cocoa',         days:'Qua · Qui', promo:'Leve 2 Pague 1'},
+                {key:'hotchocolate', emoji:'🍵', name:'Hot Chocolate', days:'Sexta',     promo:'25% OFF Grande'},
+                {key:'cortado',      emoji:'🥛', name:'Cortado',       days:'Sáb · Dom', promo:'+ Brinde'},
+              ].map((c, i, arr) => (
                 <button key={c.key} onClick={() => openCoffee(c.key)}
-                  className="icard bg-white/5 border border-[#8b5cf6]/30 rounded-xl p-3 text-center group hover:border-[#8b5cf6]/70"
-                  style={{boxShadow:'0 0 0 0 rgba(139,92,246,0)', transition:'all .2s ease'}}>
-                  <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">{c.emoji}</div>
-                  <div className="text-xs font-bold text-white/80 group-hover:text-white">{c.name}</div>
-                  <div className="text-[10px] font-semibold mt-1 text-[#8b5cf6]">{c.days}</div>
-                  <div className="text-[9px] text-white/25 mt-1.5 group-hover:text-white/50">toque para ver ↗</div>
+                  className="icard w-full flex items-center justify-between px-4 py-3 group"
+                  style={{borderBottom: i < arr.length-1 ? '1px solid rgba(255,255,255,.05)' : 'none', textAlign:'left'}}>
+                  <div className="flex items-center gap-3">
+                    <span className="text-lg group-hover:scale-110 transition-transform">{c.emoji}</span>
+                    <div>
+                      <div className="text-xs font-bold" style={{color:'rgba(255,255,255,.8)'}}>{c.name}</div>
+                      <div className="text-[10px]" style={{color:'rgba(212,168,83,.55)'}}>{c.days}</div>
+                    </div>
+                  </div>
+                  <div className="text-[10px] font-bold px-2 py-1 rounded-full"
+                       style={{background:'rgba(212,168,83,.12)', color:'#d4a853', border:'1px solid rgba(212,168,83,.28)'}}>
+                    {c.promo}
+                  </div>
                 </button>
               ))}
             </div>
-            <div className="text-white/25 text-xs tracking-wider">promoção nova toda semana</div>
+            <div className="text-[10px] tracking-wider" style={{color:'rgba(255,255,255,.18)'}}>toque em cada linha para detalhes ↗</div>
           </div>
         ),
       },
       {
         type: 'seg-ter', badge: 'Segunda & Terça',
-        headline: ['Espresso:', 'Energia Para', 'Começar. ⚡'],
-        sub: 'Nos primeiros dias da semana, o Espresso chega com desconto especial.',
+        headline: ['Espresso:', 'A Base de', 'Tudo. ☕'],
+        sub: 'Tradição italiana em 30ml. Força, crema dourada e energia para dominar a semana.',
         visual: (openCoffee) => (
           <div className="flex flex-col items-center gap-4 w-full max-w-xs">
-            <button onClick={() => openCoffee('expresso')}
-              className="float text-7xl hover:scale-110 transition-transform active:scale-95">☕</button>
-            <div className="icard w-full bg-white/5 border-2 border-[#8b5cf6]/50 rounded-2xl p-5 text-center">
-              <div className="text-xs uppercase tracking-widest font-bold mb-1 text-[#8b5cf6]">Desconto Especial</div>
-              <div className="text-5xl font-black text-white">20% <span className="text-[#8b5cf6]">OFF</span></div>
-              <div className="text-white/45 text-sm mt-1">No Espresso toda Seg e Ter</div>
+            <div className="w-full rounded-2xl p-5"
+                 style={{background:'rgba(212,168,83,.05)', border:'1px solid rgba(212,168,83,.22)'}}>
+              <div className="flex items-center gap-3 mb-4">
+                <button onClick={() => openCoffee('expresso')} className="float text-5xl hover:scale-110 transition-transform">☕</button>
+                <div>
+                  <div className="text-[10px] uppercase tracking-[3px]" style={{color:'rgba(212,168,83,.6)'}}>Seg · Ter</div>
+                  <div className="text-lg font-black text-white">Espresso</div>
+                  <div className="text-xs italic" style={{color:'rgba(255,255,255,.32)'}}>Itália · Tradição desde 1901</div>
+                </div>
+              </div>
+              <div className="border-t pt-3 mb-4" style={{borderColor:'rgba(255,255,255,.07)'}}>
+                <div className="flex gap-2 flex-wrap">
+                  {['Chocolate amargo','Caramelo','Nozes'].map((n,i) => (
+                    <span key={i} className="text-[10px] px-2 py-1 rounded-full"
+                      style={{background:'rgba(212,168,83,.1)', border:'1px solid rgba(212,168,83,.25)', color:'rgba(212,168,83,.85)'}}>
+                      {n}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-3xl font-black text-white">20% <span style={{color:'#d4a853'}}>OFF</span></div>
+                  <div className="text-[10px]" style={{color:'rgba(255,255,255,.32)'}}>toda segunda e terça</div>
+                </div>
+                <button onClick={() => openCoffee('expresso')}
+                  className="ibtn text-[10px] font-bold px-3 py-1.5 rounded-full"
+                  style={{border:'1px solid rgba(212,168,83,.4)', color:'#d4a853'}}>
+                  ✦ Detalhes
+                </button>
+              </div>
             </div>
-            <button onClick={() => openCoffee('expresso')}
-              className="ibtn text-xs font-bold text-[#8b5cf6] border border-[#8b5cf6]/40 rounded-full px-4 py-2 hover:bg-[#8b5cf6]/10">
-              ✦ Ver detalhes do Espresso
-            </button>
+            <div className="font-mono text-sm font-bold tracking-widest rounded-lg py-2 w-full text-center"
+                 style={{background:'rgba(0,0,0,.35)', border:'1px solid rgba(212,168,83,.22)', color:'#d4a853'}}>
+              EXPRESSO20
+            </div>
           </div>
         ),
       },
       {
         type: 'qua-qui', badge: 'Quarta & Quinta',
-        headline: ['Cocoa:', 'Conforto No', 'Meio da Semana. 🍫'],
-        sub: 'Chegou a queda de tarde? O Cocoa quente resolve.',
+        headline: ['Cocoa:', 'Conforto No', 'Meio. 🍫'],
+        sub: 'Cacau premium baiano em leite aveludado. A queda de tarde nunca foi tão boa.',
         visual: (openCoffee) => (
           <div className="flex flex-col items-center gap-4 w-full max-w-xs">
-            <button onClick={() => openCoffee('cocoa')}
-              className="float text-7xl hover:scale-110 transition-transform active:scale-95">🍫</button>
-            <div className="icard w-full bg-white/5 border-2 border-[#8b5cf6]/50 rounded-2xl p-5 text-center">
-              <div className="text-xs uppercase tracking-widest font-bold mb-1 text-[#8b5cf6]">Promoção Exclusiva</div>
-              <div className="text-5xl font-black text-white">Leve <span className="text-[#8b5cf6]">2</span></div>
-              <div className="text-white/45 text-sm mt-1">Pague 1 · Cocoa Qua e Qui</div>
+            <div className="w-full rounded-2xl p-5"
+                 style={{background:'rgba(212,168,83,.05)', border:'1px solid rgba(212,168,83,.22)'}}>
+              <div className="flex items-center gap-3 mb-4">
+                <button onClick={() => openCoffee('cocoa')} className="float text-5xl hover:scale-110 transition-transform">🍫</button>
+                <div>
+                  <div className="text-[10px] uppercase tracking-[3px]" style={{color:'rgba(212,168,83,.6)'}}>Qua · Qui</div>
+                  <div className="text-lg font-black text-white">Cocoa</div>
+                  <div className="text-xs italic" style={{color:'rgba(255,255,255,.32)'}}>Brasil · Cacau Premium Baiano</div>
+                </div>
+              </div>
+              <div className="border-t pt-3 mb-4" style={{borderColor:'rgba(255,255,255,.07)'}}>
+                <div className="flex gap-2 flex-wrap">
+                  {['Chocolate meio amargo','Mel silvestre','Canela'].map((n,i) => (
+                    <span key={i} className="text-[10px] px-2 py-1 rounded-full"
+                      style={{background:'rgba(212,168,83,.1)', border:'1px solid rgba(212,168,83,.25)', color:'rgba(212,168,83,.85)'}}>
+                      {n}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-3xl font-black text-white">Leve <span style={{color:'#d4a853'}}>2</span></div>
+                  <div className="text-[10px]" style={{color:'rgba(255,255,255,.32)'}}>pague 1 · qua e qui</div>
+                </div>
+                <button onClick={() => openCoffee('cocoa')}
+                  className="ibtn text-[10px] font-bold px-3 py-1.5 rounded-full"
+                  style={{border:'1px solid rgba(212,168,83,.4)', color:'#d4a853'}}>
+                  ✦ Detalhes
+                </button>
+              </div>
             </div>
-            <button onClick={() => openCoffee('cocoa')}
-              className="ibtn text-xs font-bold text-[#8b5cf6] border border-[#8b5cf6]/40 rounded-full px-4 py-2 hover:bg-[#8b5cf6]/10">
-              ✦ Ver detalhes do Cocoa
-            </button>
+            <div className="font-mono text-sm font-bold tracking-widest rounded-lg py-2 w-full text-center"
+                 style={{background:'rgba(0,0,0,.35)', border:'1px solid rgba(212,168,83,.22)', color:'#d4a853'}}>
+              COCOA2X1
+            </div>
           </div>
         ),
       },
       {
         type: 'sex', badge: 'Sexta-Feira',
-        headline: ['Hot Chocolate:', 'Celebre o', 'Fim da Semana. 🎉'],
-        sub: 'Você chegou até sexta. Merece um Hot Chocolate cremoso.',
+        headline: ['Hot Chocolate:', 'Você Chegou', 'Lá. 🍵'],
+        sub: 'Chocolate belga 70% com creme fresco. Porque sexta merece a melhor indulgência.',
         visual: (openCoffee) => (
           <div className="flex flex-col items-center gap-4 w-full max-w-xs">
-            <button onClick={() => openCoffee('hotchocolate')}
-              className="float text-7xl hover:scale-110 transition-transform active:scale-95">🍵</button>
-            <div className="icard w-full bg-white/5 border-2 border-[#8b5cf6]/50 rounded-2xl p-5 text-center">
-              <div className="text-xs uppercase tracking-widest font-bold mb-1 text-[#8b5cf6]">Só na Sexta</div>
-              <div className="text-5xl font-black text-white">25% <span className="text-[#8b5cf6]">OFF</span></div>
-              <div className="text-white/45 text-sm mt-1">Hot Chocolate tamanho grande</div>
+            <div className="w-full rounded-2xl p-5"
+                 style={{background:'rgba(212,168,83,.05)', border:'1px solid rgba(212,168,83,.22)'}}>
+              <div className="flex items-center gap-3 mb-4">
+                <button onClick={() => openCoffee('hotchocolate')} className="float text-5xl hover:scale-110 transition-transform">🍵</button>
+                <div>
+                  <div className="text-[10px] uppercase tracking-[3px]" style={{color:'rgba(212,168,83,.6)'}}>Sexta-Feira</div>
+                  <div className="text-lg font-black text-white">Hot Chocolate</div>
+                  <div className="text-xs italic" style={{color:'rgba(255,255,255,.32)'}}>Bélgica · Chocolate 70% Cacau</div>
+                </div>
+              </div>
+              <div className="border-t pt-3 mb-4" style={{borderColor:'rgba(255,255,255,.07)'}}>
+                <div className="flex gap-2 flex-wrap">
+                  {['Chocolate ao leite','Baunilha','Creme suave'].map((n,i) => (
+                    <span key={i} className="text-[10px] px-2 py-1 rounded-full"
+                      style={{background:'rgba(212,168,83,.1)', border:'1px solid rgba(212,168,83,.25)', color:'rgba(212,168,83,.85)'}}>
+                      {n}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-3xl font-black text-white">25% <span style={{color:'#d4a853'}}>OFF</span></div>
+                  <div className="text-[10px]" style={{color:'rgba(255,255,255,.32)'}}>tamanho grande · só sexta</div>
+                </div>
+                <button onClick={() => openCoffee('hotchocolate')}
+                  className="ibtn text-[10px] font-bold px-3 py-1.5 rounded-full"
+                  style={{border:'1px solid rgba(212,168,83,.4)', color:'#d4a853'}}>
+                  ✦ Detalhes
+                </button>
+              </div>
             </div>
-            <button onClick={() => openCoffee('hotchocolate')}
-              className="ibtn text-xs font-bold text-[#8b5cf6] border border-[#8b5cf6]/40 rounded-full px-4 py-2 hover:bg-[#8b5cf6]/10">
-              ✦ Ver detalhes do Hot Chocolate
-            </button>
+            <div className="font-mono text-sm font-bold tracking-widest rounded-lg py-2 w-full text-center"
+                 style={{background:'rgba(0,0,0,.35)', border:'1px solid rgba(212,168,83,.22)', color:'#d4a853'}}>
+              HOTCHOC25
+            </div>
           </div>
         ),
       },
       {
         type: 'fds', badge: 'Sábado & Domingo',
-        headline: ['Cortado:', 'O Fim de', 'Semana Perfeito. 🤍'],
-        sub: 'Espresso com toque de leite vaporizado. Requinte no copo, desconto no bolso.',
+        headline: ['Cortado:', 'Equilíbrio', 'Perfeito. 🥛'],
+        sub: 'Espresso cortado por leite vaporizado. O café dos verdadeiros apreciadores.',
         visual: (openCoffee) => (
           <div className="flex flex-col items-center gap-4 w-full max-w-xs">
-            <button onClick={() => openCoffee('cortado')}
-              className="float text-7xl hover:scale-110 transition-transform active:scale-95">🥛</button>
-            <div className="icard w-full bg-[#8b5cf6] rounded-2xl p-5 text-center"
-                 style={{boxShadow:'0 8px 32px rgba(139,92,246,.35)'}}>
-              <div className="text-white/70 text-xs uppercase tracking-widest font-bold mb-1">Fim de Semana Especial</div>
-              <div className="text-3xl font-black text-white">Cortado + Brinde</div>
-              <div className="text-white/70 text-sm mt-1">Surpresa no sábado e domingo</div>
+            <div className="w-full rounded-2xl p-5"
+                 style={{background:'rgba(212,168,83,.05)', border:'1px solid rgba(212,168,83,.22)'}}>
+              <div className="flex items-center gap-3 mb-4">
+                <button onClick={() => openCoffee('cortado')} className="float text-5xl hover:scale-110 transition-transform">🥛</button>
+                <div>
+                  <div className="text-[10px] uppercase tracking-[3px]" style={{color:'rgba(212,168,83,.6)'}}>Sáb · Dom</div>
+                  <div className="text-lg font-black text-white">Cortado</div>
+                  <div className="text-xs italic" style={{color:'rgba(255,255,255,.32)'}}>Espanha · Técnica Tradicional</div>
+                </div>
+              </div>
+              <div className="border-t pt-3 mb-4" style={{borderColor:'rgba(255,255,255,.07)'}}>
+                <div className="flex gap-2 flex-wrap">
+                  {['Café intenso','Leite sedoso','Equilíbrio'].map((n,i) => (
+                    <span key={i} className="text-[10px] px-2 py-1 rounded-full"
+                      style={{background:'rgba(212,168,83,.1)', border:'1px solid rgba(212,168,83,.25)', color:'rgba(212,168,83,.85)'}}>
+                      {n}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-2xl font-black text-white">Cortado <span style={{color:'#d4a853'}}>+</span></div>
+                  <div className="text-[10px]" style={{color:'rgba(255,255,255,.32)'}}>brinde surpresa · sáb e dom</div>
+                </div>
+                <button onClick={() => openCoffee('cortado')}
+                  className="ibtn text-[10px] font-bold px-3 py-1.5 rounded-full"
+                  style={{border:'1px solid rgba(212,168,83,.4)', color:'#d4a853'}}>
+                  ✦ Detalhes
+                </button>
+              </div>
             </div>
-            <button onClick={() => openCoffee('cortado')}
-              className="ibtn text-xs font-bold text-[#8b5cf6] border border-[#8b5cf6]/40 rounded-full px-4 py-2 hover:bg-[#8b5cf6]/10">
-              ✦ Ver detalhes do Cortado
-            </button>
+            <div className="font-mono text-sm font-bold tracking-widest rounded-lg py-2 w-full text-center"
+                 style={{background:'rgba(0,0,0,.35)', border:'1px solid rgba(212,168,83,.22)', color:'#d4a853'}}>
+              CORTADO
+            </div>
           </div>
         ),
       },
@@ -428,43 +538,49 @@ const campaigns = [
 
   {
     id: 3, emoji: '🔥', title: 'Terça É Nosso Dia', subtitle: '585 Vendas',
-    accent: '#f43f5e', bg: '#0f0206',
+    accent: '#e84060', bg: '#0a0a0f',
     slides: [
       {
         type: 'cover', badge: 'Campanha 3 · Terça-feira',
         headline: ['Terça-Feira', 'É Nosso', 'Dia. 🔥'],
-        sub: 'O dia com maior movimento da semana — e você ainda não sabe por quê.',
+        sub: 'O dia com maior movimento da semana. 585 pessoas não podem estar erradas.',
         visual: () => (
           <div className="flex flex-col items-center gap-3">
-            <div className="text-xs font-bold uppercase tracking-widest text-[#f43f5e] pulse-dot">Recorde Semanal</div>
-            <div className="glow-text text-9xl font-black text-white leading-none">585</div>
-            <div className="text-white/40 text-sm">vendas numa única terça-feira</div>
-            <div className="flex gap-1 mt-1">
-              {['🔥','🔥','🔥'].map((e,i)=><span key={i} className="text-2xl">{e}</span>)}
+            <div className="text-[10px] font-black uppercase tracking-[5px]" style={{color:'rgba(232,64,96,.65)'}}>RECORDE SEMANAL</div>
+            <div style={{fontSize:'96px', fontWeight:900, lineHeight:1, color:'#fff',
+              textShadow:'0 0 60px rgba(232,64,96,.45)', letterSpacing:'-4px'}}>
+              585
+            </div>
+            <div style={{height:'2px', width:'64px', background:'linear-gradient(90deg,transparent,#e84060,transparent)', borderRadius:'2px'}}/>
+            <div className="text-sm" style={{color:'rgba(255,255,255,.32)', letterSpacing:'2px'}}>vendas numa única terça-feira</div>
+            <div className="flex gap-1.5 mt-1">
+              {[...Array(5)].map((_,i) => (
+                <div key={i} className="pulse-dot w-1.5 h-1.5 rounded-full" style={{background:'#e84060', animationDelay:`${i*180}ms`}}/>
+              ))}
             </div>
           </div>
         ),
       },
       {
         type: 'insight', badge: 'O Insight',
-        headline: ['585 Vendas.', 'Terça Bate', 'Todo Mundo. 📊'],
-        sub: 'Analisamos todos os dias da semana. Terça vence de longe.',
+        headline: ['Terça Bate', 'Todo Mundo.', '📊'],
+        sub: 'Analisamos todos os dias da semana. Terça não só vence — ela domina.',
         visual: () => (
           <div className="w-full max-w-xs">
-            <div className="text-xs text-white/30 uppercase tracking-widest mb-3">Vendas por dia</div>
+            <div className="text-xs uppercase tracking-widest mb-3" style={{color:'rgba(255,255,255,.28)'}}>Vendas por dia da semana</div>
             {[
               { d:'Seg', v:420 }, { d:'Ter', v:585, hi:true },
               { d:'Qua', v:510 }, { d:'Qui', v:498 },
               { d:'Sex', v:540 }, { d:'Sáb', v:390 }, { d:'Dom', v:293 },
             ].map((r,i) => (
-              <div key={i} className="flex items-center gap-3 mb-2 group">
-                <div className="text-xs text-white/40 w-7">{r.d}</div>
-                <div className="flex-1 h-7 bg-white/4 rounded-lg overflow-hidden">
+              <div key={i} className="flex items-center gap-3 mb-2">
+                <div className="text-xs w-7" style={{color: r.hi ? '#e84060' : 'rgba(255,255,255,.4)', fontWeight: r.hi ? 700 : 400}}>{r.d}</div>
+                <div className="flex-1 h-6 rounded-lg overflow-hidden" style={{background:'rgba(255,255,255,.04)'}}>
                   <div className="bar-fill h-full rounded-lg flex items-center pl-2 text-xs font-bold"
                        style={{ animationDelay:`${i*60}ms`, width:`${Math.round((r.v/585)*100)}%`,
-                         background: r.hi ? '#f43f5e' : 'rgba(255,255,255,.1)',
-                         color: r.hi ? '#fff' : 'rgba(255,255,255,.4)' }}>
-                    {r.v}
+                         background: r.hi ? 'linear-gradient(90deg,#e84060,#ff607a)' : 'rgba(255,255,255,.08)',
+                         color: r.hi ? '#fff' : 'rgba(255,255,255,.38)' }}>
+                    {r.hi ? `🔥 ${r.v}` : r.v}
                   </div>
                 </div>
               </div>
@@ -473,65 +589,81 @@ const campaigns = [
         ),
       },
       {
-        type: 'community', badge: 'Comunidade',
-        headline: ['Todo Mundo', 'Vem na Terça.', 'Você Quer Estar Lá? 👥'],
-        sub: 'Nossos clientes mais fiéis fazem da terça um ritual.',
+        type: 'community', badge: 'A Comunidade',
+        headline: ['Todo Mundo', 'Vem na Terça.', '👥'],
+        sub: 'Nossos clientes mais fiéis tornaram a terça um ritual coletivo semanal.',
         visual: () => (
           <div className="flex flex-col items-center gap-4 w-full max-w-xs">
-            <div className="grid grid-cols-5 gap-1">
+            <div className="grid grid-cols-5 gap-1.5">
               {Array.from({length:25}).map((_,i) => (
-                <div key={i} className="icard w-10 h-10 rounded-full flex items-center justify-center text-lg"
-                     style={{ background: i < 20 ? 'rgba(244,63,94,.15)' : 'rgba(255,255,255,.04)',
-                       border: i < 20 ? '1px solid rgba(244,63,94,.35)' : '1px solid rgba(255,255,255,.08)' }}>
+                <div key={i} className="icard w-9 h-9 rounded-full flex items-center justify-center text-base"
+                     style={{
+                       background: i < 20 ? 'rgba(232,64,96,.14)' : 'rgba(255,255,255,.03)',
+                       border: i < 20 ? '1px solid rgba(232,64,96,.38)' : '1px solid rgba(255,255,255,.06)',
+                     }}>
                   {['👩','👨','🧔','👧','🧑'][i%5]}
                 </div>
               ))}
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-black text-[#f43f5e]">585</div>
-              <div className="text-xs text-white/35">pessoas na última terça</div>
+            <div className="flex items-center gap-4 w-full">
+              <div className="flex-1 h-px" style={{background:'rgba(232,64,96,.2)'}}/>
+              <div className="text-center">
+                <div className="text-2xl font-black" style={{color:'#e84060'}}>585</div>
+                <div className="text-[10px]" style={{color:'rgba(255,255,255,.3)'}}>na última terça</div>
+              </div>
+              <div className="flex-1 h-px" style={{background:'rgba(232,64,96,.2)'}}/>
             </div>
           </div>
         ),
       },
       {
         type: 'promo', badge: 'A Promoção',
-        headline: ['Terça Com', 'Brinde Exclusivo', 'ou 20% OFF. 🎁'],
-        sub: 'Toda terça-feira você escolhe: brinde surpresa ou 20% em combos.',
+        headline: ['Você Escolhe.', 'Brinde Ou', 'Desconto. 🎁'],
+        sub: 'Toda terça você decide: brinde exclusivo da semana ou 20% em qualquer combo.',
         visual: () => (
-          <div className="flex gap-3 w-full max-w-sm">
+          <div className="flex flex-col gap-3 w-full max-w-sm">
             {[
-              { icon:'🎁', tag:'Opção A', title:'Brinde Surpresa', desc:'Novo a cada semana' },
-              { icon:'💸', tag:'Opção B', title:'20% OFF', desc:'Em qualquer combo' },
+              {icon:'🎁', tag:'OPÇÃO A', title:'Brinde Surpresa', desc:'Novo todo semana. Pode ser qualquer coisa.', hi:true},
+              {icon:'💸', tag:'OPÇÃO B', title:'20% OFF Combos',  desc:'Em qualquer combo do cardápio.', hi:false},
             ].map((op,i) => (
-              <div key={i} className="icard flex-1 bg-white/4 border-2 border-[#f43f5e]/40 rounded-2xl p-4 text-center"
-                   style={{boxShadow:'0 0 24px rgba(244,63,94,.08)'}}>
-                <div className="text-4xl mb-2">{op.icon}</div>
-                <div className="text-xs uppercase tracking-widest text-[#f43f5e] font-bold mb-1">{op.tag}</div>
-                <div className="text-sm font-black text-white">{op.title}</div>
-                <div className="text-xs text-white/35 mt-2">{op.desc}</div>
+              <div key={i} className="icard flex items-center gap-4 rounded-2xl p-4"
+                   style={{
+                     background: op.hi ? 'rgba(232,64,96,.1)' : 'rgba(255,255,255,.04)',
+                     border: `2px solid ${op.hi ? 'rgba(232,64,96,.45)' : 'rgba(255,255,255,.1)'}`,
+                     boxShadow: op.hi ? '0 0 30px rgba(232,64,96,.1)' : 'none',
+                   }}>
+                <div className="text-4xl">{op.icon}</div>
+                <div>
+                  <div className="text-[10px] font-black uppercase tracking-widest mb-0.5" style={{color:'#e84060'}}>{op.tag}</div>
+                  <div className="text-sm font-black text-white">{op.title}</div>
+                  <div className="text-[10px] mt-0.5" style={{color:'rgba(255,255,255,.32)'}}>{op.desc}</div>
+                </div>
               </div>
             ))}
           </div>
         ),
       },
       {
-        type: 'cta', badge: 'Ação',
-        headline: ['Próxima Terça', 'É Sua!', 'Reserve Já. 📅'],
-        sub: 'Terça-feira tem café, desconto e comunidade — tudo junto.',
+        type: 'cta', badge: 'O Chamado',
+        headline: ['Próxima Terça', 'Tem Seu', 'Nome. 📅'],
+        sub: 'Café, desconto e comunidade. Toda terça, sem falta.',
         visual: () => (
           <div className="flex flex-col items-center gap-4 w-full max-w-xs">
-            <div className="float text-7xl">🔥</div>
-            <div className="icard w-full bg-[#f43f5e] rounded-2xl p-5 text-center"
-                 style={{boxShadow:'0 8px 32px rgba(244,63,94,.35)'}}>
-              <div className="text-white font-black text-xl">Reserve seu café!</div>
-              <div className="text-white/80 text-sm mt-1">Toda terça tem surpresa</div>
+            <div className="relative float">
+              <span className="text-7xl">🔥</span>
+              <div className="absolute inset-0 rounded-full blur-2xl" style={{background:'rgba(232,64,96,.18)'}}/>
+            </div>
+            <div className="icard w-full rounded-2xl p-5 text-center"
+                 style={{background:'linear-gradient(135deg,#e84060,#b02040)', boxShadow:'0 8px 40px rgba(232,64,96,.3)'}}>
+              <div className="text-white font-black text-lg">Reserve seu café!</div>
+              <div className="text-sm mt-1" style={{color:'rgba(255,255,255,.78)'}}>Toda terça tem surpresa esperando</div>
             </div>
             <div className="grid grid-cols-2 gap-3 w-full">
               {[{icon:'📲',label:'WhatsApp'},{icon:'📍',label:'Nos encontre'}].map((b,i)=>(
-                <div key={i} className="icard bg-white/5 border border-white/8 rounded-xl p-3 text-center">
+                <div key={i} className="icard rounded-xl p-3 text-center"
+                     style={{background:'rgba(255,255,255,.04)', border:'1px solid rgba(232,64,96,.15)'}}>
                   <div className="text-lg">{b.icon}</div>
-                  <div className="text-xs text-white/40 mt-1">{b.label}</div>
+                  <div className="text-xs mt-1" style={{color:'rgba(255,255,255,.4)'}}>{b.label}</div>
                 </div>
               ))}
             </div>
@@ -551,7 +683,7 @@ function CoffeeModal({ coffeeKey, onClose }) {
          onClick={onClose} style={{background:'rgba(0,0,0,.65)', backdropFilter:'blur(6px)'}}>
       <div className="modal-sheet relative w-full max-w-lg rounded-t-3xl overflow-hidden"
            onClick={e => e.stopPropagation()}
-           style={{background:'linear-gradient(160deg,#12063a,#0d0520)', border:'1px solid rgba(139,92,246,.25)', borderBottom:'none'}}>
+           style={{background:'linear-gradient(160deg,#0d1120,#070e1a)', border:'1px solid rgba(212,168,83,.22)', borderBottom:'none'}}>
 
         {/* handle */}
         <div className="flex justify-center pt-3 pb-1">
@@ -562,7 +694,7 @@ function CoffeeModal({ coffeeKey, onClose }) {
         <div className="flex items-start gap-4 px-6 pt-3 pb-4">
           <div className="text-6xl leading-none">{c.emoji}</div>
           <div className="flex-1 min-w-0">
-            <div className="text-xs font-bold uppercase tracking-wider text-[#8b5cf6] mb-1">{c.origin}</div>
+            <div className="text-xs font-bold uppercase tracking-wider text-[#d4a853] mb-1">{c.origin}</div>
             <div className="text-2xl font-black text-white leading-tight">{c.name}</div>
             <div className="text-sm text-white/45 italic mt-0.5">{c.tagline}</div>
           </div>
@@ -583,7 +715,7 @@ function CoffeeModal({ coffeeKey, onClose }) {
           <div className="flex gap-2 flex-wrap">
             {c.notes.map((n,i) => (
               <span key={i} className="text-xs font-semibold px-3 py-1 rounded-full"
-                style={{background:'rgba(139,92,246,.12)', border:'1px solid rgba(139,92,246,.35)', color:'#8b5cf6'}}>
+                style={{background:'rgba(212,168,83,.12)', border:'1px solid rgba(212,168,83,.35)', color:'#d4a853'}}>
                 {n}
               </span>
             ))}
@@ -597,7 +729,7 @@ function CoffeeModal({ coffeeKey, onClose }) {
             {[1,2,3,4,5].map(i => (
               <div key={i} className="dot-fill h-2 rounded-full transition-all"
                    style={{ animationDelay:`${i*60}ms`, width: i <= c.intensity ? '28px' : '10px',
-                     background: i <= c.intensity ? '#8b5cf6' : 'rgba(255,255,255,.08)' }}/>
+                     background: i <= c.intensity ? '#d4a853' : 'rgba(255,255,255,.08)' }}/>
             ))}
             <span className="text-xs text-white/25 ml-1">{c.intensity}/5</span>
           </div>
@@ -611,12 +743,12 @@ function CoffeeModal({ coffeeKey, onClose }) {
 
         {/* promo */}
         <div className="mx-6 mb-6 rounded-2xl p-4"
-             style={{background:'rgba(139,92,246,.1)', border:'1px solid rgba(139,92,246,.28)'}}>
-          <div className="text-xs text-[#8b5cf6] font-bold uppercase tracking-wider mb-1.5">
+             style={{background:'rgba(212,168,83,.1)', border:'1px solid rgba(212,168,83,.28)'}}>
+          <div className="text-xs text-[#d4a853] font-bold uppercase tracking-wider mb-1.5">
             🎉 Promoção · {c.days}
           </div>
           <div className="text-white font-bold text-sm mb-2">{c.promo}</div>
-          <div className="font-mono text-sm font-bold text-[#8b5cf6] bg-black/30 rounded-lg px-3 py-1.5 inline-block tracking-widest">
+          <div className="font-mono text-sm font-bold text-[#d4a853] bg-black/30 rounded-lg px-3 py-1.5 inline-block tracking-widest">
             {c.code}
           </div>
         </div>
@@ -724,7 +856,7 @@ function App() {
   const doneSlides  = campaigns.slice(0, activeCamp).reduce((a, c) => a + c.slides.length, 0) + activeSlide + 1;
   const topPct      = Math.round((doneSlides / totalSlides) * 100);
 
-  const bgMap = { '#0c0905': '#0c0905', '#2c1505': '#2c1505', '#060212': '#060212', '#0f0206': '#0f0206' };
+  const bgMap = { '#0c0905': '#0c0905', '#070e1a': '#070e1a', '#0a0a0f': '#0a0a0f' };
   const slideBg = bgMap[camp.bg] || '#0d0402';
 
   /* ── shared slide card ── */
